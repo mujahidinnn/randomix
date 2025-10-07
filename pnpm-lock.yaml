@@ -8,6 +8,12 @@ dependencies:
   '@heroicons/vue':
     specifier: ^2.2.0
     version: 2.2.0(vue@3.5.21)
+  '@pinia-plugin-persistedstate/nuxt':
+    specifier: ^1.2.1
+    version: 1.2.1(@pinia/nuxt@0.11.2)(pinia@3.0.3)
+  '@pinia/nuxt':
+    specifier: ^0.11.2
+    version: 0.11.2(pinia@3.0.3)
   html2canvas:
     specifier: ^1.4.1
     version: 1.4.1
@@ -17,6 +23,12 @@ dependencies:
   nuxt:
     specifier: ^4.1.2
     version: 4.1.2(@vue/compiler-sfc@3.5.21)(vite@7.1.5)
+  pinia:
+    specifier: ^3.0.3
+    version: 3.0.3(vue@3.5.21)
+  pinia-plugin-persistedstate:
+    specifier: ^4.5.0
+    version: 4.5.0(@nuxt/kit@3.19.2)(@pinia/nuxt@0.11.2)(pinia@3.0.3)
   vue:
     specifier: ^3.5.21
     version: 3.5.21
@@ -1568,6 +1580,32 @@ packages:
       '@parcel/watcher-win32-x64': 2.5.1
     dev: false
 
+  /@pinia-plugin-persistedstate/nuxt@1.2.1(@pinia/nuxt@0.11.2)(pinia@3.0.3):
+    resolution: {integrity: sha512-q8s+4aQW/AjBMyeqLL48/qzBR5lcgnvvf1525ovNuKf6Wl9CsoLjPKh/5X8vNoKGwSow4gP7lVmdYPQRypgjgg==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+    peerDependencies:
+      '@pinia/nuxt': ^0.5.0
+    dependencies:
+      '@nuxt/kit': 3.19.2(magicast@0.3.5)
+      '@pinia/nuxt': 0.11.2(pinia@3.0.3)
+      defu: 6.1.4
+      pinia-plugin-persistedstate: 4.5.0(@nuxt/kit@3.19.2)(@pinia/nuxt@0.11.2)(pinia@3.0.3)
+    transitivePeerDependencies:
+      - magicast
+      - pinia
+    dev: false
+
+  /@pinia/nuxt@0.11.2(pinia@3.0.3):
+    resolution: {integrity: sha512-CgvSWpbktxxWBV7ModhAcsExsQZqpPq6vMYEe9DexmmY6959ev8ukL4iFhr/qov2Nb9cQAWd7niFDnaWkN+FHg==}
+    peerDependencies:
+      pinia: ^3.0.3
+    dependencies:
+      '@nuxt/kit': 3.19.2(magicast@0.3.5)
+      pinia: 3.0.3(vue@3.5.21)
+    transitivePeerDependencies:
+      - magicast
+    dev: false
+
   /@pkgjs/parseargs@0.11.0:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
@@ -2112,6 +2150,12 @@ packages:
 
   /@vue/devtools-api@6.6.4:
     resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
+    dev: false
+
+  /@vue/devtools-api@7.7.7:
+    resolution: {integrity: sha512-lwOnNBH2e7x1fIIbVT7yF5D+YWhqELm55/4ZKf45R9T8r9dE2AIOy8HKjfqzGsoTHFbWbr337O4E0A0QADnjBg==}
+    dependencies:
+      '@vue/devtools-kit': 7.7.7
     dev: false
 
   /@vue/devtools-core@7.7.7(vite@7.1.5)(vue@3.5.21):
@@ -2941,6 +2985,10 @@ packages:
   /deep-equal@1.0.1:
     resolution: {integrity: sha512-bHtC0iYvWhyaTzvV3CZgPeZQqCOBGyGsVV7v4eevpdkLHfiSrXUdBG+qAuSz4RI70sszvjQ1QSZ98An1yNwpSw==}
     dev: true
+
+  /deep-pick-omit@1.2.1:
+    resolution: {integrity: sha512-2J6Kc/m3irCeqVG42T+SaUMesaK7oGWaedGnQQK/+O0gYc+2SP5bKh/KKTE7d7SJ+GCA9UUE1GRzh6oDe0EnGw==}
+    dev: false
 
   /deepmerge@4.3.1:
     resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
@@ -4798,6 +4846,41 @@ packages:
     resolution: {integrity: sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /pinia-plugin-persistedstate@4.5.0(@nuxt/kit@3.19.2)(@pinia/nuxt@0.11.2)(pinia@3.0.3):
+    resolution: {integrity: sha512-QTkP1xJVyCdr2I2p3AKUZM84/e+IS+HktRxKGAIuDzkyaKKV48mQcYkJFVVDuvTxlI5j6X3oZObpqoVB8JnWpw==}
+    peerDependencies:
+      '@nuxt/kit': '>=3.0.0'
+      '@pinia/nuxt': '>=0.10.0'
+      pinia: '>=3.0.0'
+    peerDependenciesMeta:
+      '@nuxt/kit':
+        optional: true
+      '@pinia/nuxt':
+        optional: true
+      pinia:
+        optional: true
+    dependencies:
+      '@nuxt/kit': 3.19.2(magicast@0.3.5)
+      '@pinia/nuxt': 0.11.2(pinia@3.0.3)
+      deep-pick-omit: 1.2.1
+      defu: 6.1.4
+      destr: 2.0.5
+      pinia: 3.0.3(vue@3.5.21)
+    dev: false
+
+  /pinia@3.0.3(vue@3.5.21):
+    resolution: {integrity: sha512-ttXO/InUULUXkMHpTdp9Fj4hLpD/2AoJdmAbAeW2yu1iy1k+pkFekQXw5VpC0/5p51IOR/jDaDRfRWRnMMsGOA==}
+    peerDependencies:
+      typescript: '>=4.4.4'
+      vue: ^2.7.0 || ^3.5.11
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@vue/devtools-api': 7.7.7
+      vue: 3.5.21
+    dev: false
 
   /pirates@4.0.7:
     resolution: {integrity: sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==}

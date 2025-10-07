@@ -127,6 +127,16 @@
         <BoltIcon v-else class="w-5 h-5" />
         <span>{{ teams.length ? "Generate Ulang" : "Generate Tim" }}</span>
       </button>
+
+      <!-- Tombol Buat Cup -->
+      <button
+        @click="handleCreateCup"
+        :disabled="players.length < 2 || teamCount < 2"
+        class="hidden mt-4 w-full px-6 py-3 bg-white text-blue-500 font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 transition disabled:bg-white/90 disabled:text-blue-400 disabled:cursor-not-allowed hover:bg-gray-200"
+      >
+        <BoltIcon class="w-5 h-5" />
+        <span>Buat Cup</span>
+      </button>
     </div>
 
     <!-- Aksi Result -->
@@ -243,6 +253,9 @@ import {
 
 import html2canvas from "html2canvas";
 
+import { useCupStore } from "../stores/cup";
+import { useRouter } from "vue-router";
+
 let jsPDF;
 
 const playerName = ref("");
@@ -257,6 +270,20 @@ onMounted(async () => {
   const module = await import("jspdf");
   jsPDF = module.default;
 });
+
+const cupStore = useCupStore();
+const router = useRouter();
+
+function handleCreateCup() {
+  cupStore.setCupData({
+    players: players.value,
+    teams: teams.value,
+    useLevel: useLevel.value,
+    teamCount: teamCount.value,
+  });
+
+  router.push("/create-cup");
+}
 
 function addPlayer() {
   if (!playerName.value.trim()) return;
@@ -273,33 +300,86 @@ function removePlayer(idx) {
 }
 
 function generateTeams() {
+  // reset
   teams.value = Array.from({ length: teamCount.value }, () => []);
+
+  // safety
+  const nTeams = Math.max(1, Number(teamCount.value) || 1);
+  if (players.value.length === 0) return;
+
   if (useLevel.value) {
-    const levels = ["Pro", "Middle", "Newbie"];
-    const levelGroups = {};
-    levels.forEach((lvl) => {
-      levelGroups[lvl] = players.value.filter((p) => p.level === lvl);
-      shuffleArray(levelGroups[lvl]); // acak tiap level
-    });
+    // 1) map score
+    const scoreMap = { Pro: 3, Middle: 2, Newbie: 1 };
 
-    let teamIdx = 0;
-    let remaining = true;
+    // 2) copy & normalize players (beri default level kalau kosong)
+    const pool = players.value.map((p) => ({
+      name: p.name,
+      level: p.level || "Newbie",
+      score: scoreMap[p.level] || scoreMap["Newbie"],
+    }));
 
-    while (remaining) {
-      remaining = false;
-      levels.forEach((lvl) => {
-        if (levelGroups[lvl].length) {
-          teams.value[teamIdx % teamCount.value].push(levelGroups[lvl].shift());
-          teamIdx++;
-          remaining = true;
-        }
+    // 3) shuffle to avoid deterministic ties
+    shuffleArray(pool);
+
+    // 4) sort descending by score (highest skill assigned first)
+    pool.sort((a, b) => b.score - a.score);
+
+    // 5) init team stats
+    const teamStats = Array.from({ length: nTeams }, () => ({
+      members: [],
+      totalScore: 0,
+    }));
+
+    // 6) greedy assign: always put next player into team with smallest totalScore,
+    //    tie-breaker: team with smallest members length
+    for (const p of pool) {
+      // find best team index
+      teamStats.sort((a, b) => {
+        if (a.totalScore !== b.totalScore) return a.totalScore - b.totalScore;
+        return a.members.length - b.members.length;
       });
+      teamStats[0].members.push(p);
+      teamStats[0].totalScore += p.score;
     }
+
+    // 7) ensure sizes balanced (difference <= 1)
+    //    if some team too large, move lowest-score member from largest to smallest until balanced
+    let stabilized = false;
+    while (!stabilized) {
+      const sizes = teamStats.map((t) => t.members.length);
+      const maxSize = Math.max(...sizes);
+      const minSize = Math.min(...sizes);
+      if (maxSize - minSize <= 1) {
+        stabilized = true;
+        break;
+      }
+      // find team indexes
+      const iMax = teamStats.findIndex((t) => t.members.length === maxSize);
+      const iMin = teamStats.findIndex((t) => t.members.length === minSize);
+
+      // choose candidate to move from iMax: the member with the smallest score (to keep scores balanced)
+      teamStats[iMax].members.sort((a, b) => a.score - b.score);
+      const moved = teamStats[iMax].members.shift();
+      if (!moved) break;
+      teamStats[iMax].totalScore -= moved.score;
+      teamStats[iMin].members.push(moved);
+      teamStats[iMin].totalScore += moved.score;
+    }
+
+    // 8) write to teams.value and remove score field
+    teams.value = teamStats.map((t) =>
+      t.members.map(({ name, level }) => ({ name, level }))
+    );
+
+    // 9) shuffle members inside each team so order isn't predictable
+    teams.value.forEach((team) => shuffleArray(team));
   } else {
-    const allPlayers = [...players.value];
-    shuffleArray(allPlayers);
-    allPlayers.forEach((p, i) => {
-      teams.value[i % teamCount.value].push(p);
+    // no-level mode: simple shuffle + round-robin
+    const arr = [...players.value];
+    shuffleArray(arr);
+    teams.value = Array.from({ length: nTeams }, () => []);
+    arr.forEach((p, i) => {
+      teams.value[i % nTeams].push({ name: p.name, level: p.level || null });
     });
   }
 }
