@@ -1,0 +1,113 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Inter:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-bg text-text;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .font-montserrat {
+    font-family: "Montserrat", system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  /* Font randomix */
+  .font-randomix {
+    font-family: "MuseoModerno", cursive;
+    font-style: italic;
+    font-weight: 500;
+    word-spacing: -10px;
+  }
+
+  /* Glassmorphism card */
+  .card {
+    @apply bg-surface border border-border rounded-2xl p-5 relative overflow-hidden;
+  }
+  .card::before {
+    content: "";
+    @apply absolute inset-0 pointer-events-none;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 198, 255, 0.03),
+      rgba(0, 255, 136, 0.03)
+    );
+  }
+  .card-title {
+    @apply font-montserrat font-bold text-xs text-muted uppercase tracking-widest mb-3 flex items-center gap-1.5;
+  }
+
+  /* Gradient utilities */
+  .grad {
+    background: linear-gradient(135deg, #00c6ff, #00ff88);
+  }
+  .grad-text {
+    background: linear-gradient(135deg, #00c6ff, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Input */
+  .input {
+    @apply bg-surface2 border border-border rounded-xl px-4 py-2.5 text-sm text-text outline-none
+           transition-colors focus:border-blue/60 placeholder:text-muted;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold font-montserrat text-sm text-black cursor-pointer border-none transition-all;
+    background: linear-gradient(135deg, #00c6ff, #00ff88);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+  .btn-primary:active {
+    transform: scale(0.97);
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm text-muted
+           bg-transparent border border-border cursor-pointer transition-all
+           hover:border-blue/50 hover:text-blue;
+  }
+
+  /* Player item */
+  .player-item {
+    @apply flex items-center gap-2.5 px-3.5 py-2.5 bg-surface2 rounded-xl border border-border;
+  }
+
+  /* Stat chip */
+  .stat-chip {
+    @apply text-xs text-muted bg-surface2 border border-border rounded-lg px-3 py-1.5;
+  }
+
+  /* Team card */
+  .team-card {
+    @apply bg-surface2 border border-border rounded-2xl overflow-hidden;
+  }
+
+  /* Empty state */
+  .empty-state {
+    @apply flex flex-col items-center justify-center py-12 text-muted text-sm;
+  }
+
+  /* Scrollbar */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
