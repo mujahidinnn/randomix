@@ -377,8 +377,7 @@ function RoundRobinView() {
 // ============================================================
 
 function GroupView() {
-  const { tournament, submitGroupScore, promoteToKnockout, advanceWinner } =
-    useStore();
+  const { tournament, submitGroupScore, promoteToKnockout } = useStore();
   if (tournament?.type !== "group") return null;
   const { groups, isComplete, knockoutBracket } = tournament;
 
