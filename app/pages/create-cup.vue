@@ -41,11 +41,7 @@
             <span>Juara: {{ cupStore.champion.name }}</span>
           </div>
 
-          <TournamentBracket
-            :rounds="rounds"
-            @on-match-click="onMatchClick"
-            @on-participant-click="onParticipantClick"
-          >
+          <TournamentBracket :rounds="rounds" @on-participant-click="onParticipantClick">
             <template #team="{ team }">
               <span class="font-semibold">{{ team.name }}</span>
               <span v-if="team.score != null" class="ml-1 text-gray-400">({{ team.score }})</span>
@@ -107,11 +103,16 @@ import { useToast } from "../composables/useToast";
 import { TournamentBracket } from "vue3-tournament";
 import "vue3-tournament/style.css";
 
+const config = useRuntimeConfig();
+
 useSeoMeta({
   title: "Bagan Turnamen",
   description: "Lihat dan kelola bagan turnamen tim yang telah kamu buat di Randomix.",
   // Halaman ini menampilkan data lokal milik pengguna, bukan konten publik yang stabil.
   robots: "noindex, follow",
+});
+useHead({
+  link: [{ rel: "canonical", href: `${config.public.siteUrl}/create-cup` }],
 });
 
 const cupStore = useCupStore();
@@ -143,12 +144,6 @@ function statusBadgeClass(status?: string) {
   if (status === "win") return "bg-emerald-400/90 text-emerald-950";
   if (status === "lose") return "bg-red-400/80 text-red-950";
   return "bg-white/20 text-white";
-}
-
-function onMatchClick(matchId: string | number) {
-  // Placeholder untuk detail pertandingan di masa depan; pemilihan pemenang
-  // dilakukan lewat klik nama tim (onParticipantClick).
-  console.debug("Match diklik:", matchId);
 }
 
 function onParticipantClick(participant: { id: string | number; name?: string }, match: { id?: string | number }) {

@@ -1,5 +1,6 @@
 // stores/cup.ts
 import { defineStore } from "pinia";
+import { shuffleArray } from "../utils/shuffle";
 
 export type Player = { name: string; level?: string | null };
 export type Team = {
@@ -18,15 +19,6 @@ export type Round = { matchs: Match[] };
 
 let idSeq = Date.now();
 const nextId = () => idSeq++;
-
-function shuffle<T>(arr: T[]): T[] {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
 
 function nextPowerOfTwo(n: number): number {
   let p = 1;
@@ -140,7 +132,7 @@ export const useCupStore = defineStore("cup", {
         return;
       }
 
-      const shuffledIds = shuffle(this.teams.map((t) => t.id));
+      const shuffledIds = shuffleArray(this.teams.map((t) => t.id));
       const size = nextPowerOfTwo(n);
       const byes = size - n;
       const totalFirstRoundMatches = size / 2;

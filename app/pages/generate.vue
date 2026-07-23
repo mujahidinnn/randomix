@@ -271,12 +271,25 @@ import {
 import { useCupStore } from "../stores/cup";
 import { useRouter } from "vue-router";
 import { useToast } from "../composables/useToast";
+import { shuffleArray } from "../utils/shuffle";
+
+const config = useRuntimeConfig();
+const ogImageUrl = new URL("/randomix.png", config.public.siteUrl).toString();
 
 useSeoMeta({
   title: "Generate Tim",
   description:
     "Tambahkan nama pemain lalu generate tim olahraga secara acak dan adil, dengan atau tanpa mempertimbangkan level skill.",
+  ogTitle: "Generate Tim — Randomix",
+  ogDescription:
+    "Tambahkan nama pemain lalu generate tim olahraga secara acak dan adil dalam hitungan detik.",
+  ogImage: ogImageUrl,
+  twitterCard: "summary_large_image",
+  twitterImage: ogImageUrl,
   robots: "index, follow",
+});
+useHead({
+  link: [{ rel: "canonical", href: `${config.public.siteUrl}/generate` }],
 });
 
 const toast = useToast();
@@ -413,8 +426,8 @@ function generateTeams() {
       score: scoreMap[p.level] || scoreMap.Newbie,
     }));
 
-    shuffleArray(pool);
-    pool.sort((a, b) => b.score - a.score);
+    const shuffledPool = shuffleArray(pool);
+    shuffledPool.sort((a, b) => b.score - a.score);
 
     const teamStats = Array.from({ length: nTeams }, () => ({
       members: [],
@@ -422,7 +435,7 @@ function generateTeams() {
     }));
 
     // greedy assign: selalu masukkan ke tim dengan skor total terkecil
-    for (const p of pool) {
+    for (const p of shuffledPool) {
       teamStats.sort((a, b) => {
         if (a.totalScore !== b.totalScore) return a.totalScore - b.totalScore;
         return a.members.length - b.members.length;
@@ -452,25 +465,16 @@ function generateTeams() {
       teamStats[iMin].totalScore += moved.score;
     }
 
-    teams.value = teamStats.map((t) => t.members.map(({ name, level }) => ({ name, level })));
-    teams.value.forEach((team) => shuffleArray(team));
+    teams.value = teamStats.map((t) => shuffleArray(t.members.map(({ name, level }) => ({ name, level }))));
   } else {
-    const arr = [...players.value];
-    shuffleArray(arr);
+    const shuffled = shuffleArray(players.value);
     teams.value = Array.from({ length: nTeams }, () => []);
-    arr.forEach((p, i) => {
+    shuffled.forEach((p, i) => {
       teams.value[i % nTeams].push({ name: p.name, level: p.level || null });
     });
   }
 
   toast.success("Tim berhasil dibuat!");
-}
-
-function shuffleArray(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
 }
 
 function handleCreateCup() {
