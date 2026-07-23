@@ -1,0 +1,44 @@
+/* Global baseline shared by every page — design tokens, a11y and motion defaults. */
+
+:root {
+  --color-brand-from: #34d399; /* green-400 */
+  --color-brand-to: #3b82f6; /* blue-500 */
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+}
+
+/* Keep a visible focus ring for keyboard users without adding one on mouse click. */
+:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+/* Respect the OS-level reduced-motion preference across all pages. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

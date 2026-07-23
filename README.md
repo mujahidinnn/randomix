@@ -1,110 +1,93 @@
-# ⚡ RANDOMIX v2.0
+# Randomix
 
-> Platform manajemen tim olahraga & turnamen mini — frontend-only, modern, dan advanced.
+🔗 **Live:** [randomix.vercel.app](https://randomix.vercel.app)
 
-![Randomix](https://img.shields.io/badge/version-2.0.0-00c6ff?style=flat-square)
-![React](https://img.shields.io/badge/React-18-61dafb?style=flat-square&logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.4-3178c6?style=flat-square&logo=typescript)
+Randomix adalah aplikasi web untuk membagi pemain olahraga menjadi tim secara **adil dan acak**, lalu (opsional) melanjutkannya ke **bagan turnamen single-elimination** — lengkap dengan opsi berbagi hasil sebagai gambar, PDF, teks, atau link WhatsApp.
 
----
+## Fitur Utama
 
-## 🚀 Quick Start
+- **Generate Tim** — tambahkan pemain (dengan atau tanpa level skill: Newbie/Middle/Pro), tentukan jumlah tim, lalu acak. Saat mode level aktif, pembagian menggunakan algoritma greedy agar total skor tiap tim tetap seimbang.
+- **Buat Cup** — ubah hasil generate tim menjadi bagan turnamen otomatis, termasuk penanganan *bye* saat jumlah tim bukan pangkat dua.
+- **Ekspor Hasil** — download sebagai PDF/gambar, salin sebagai teks, atau share langsung ke WhatsApp.
+- **Persisted state** — progres tersimpan di `localStorage` (Pinia + `pinia-plugin-persistedstate`) sehingga tidak hilang saat refresh.
+
+## Tech Stack
+
+- [Nuxt 4](https://nuxt.com/) (Vue 3, Vite)
+- [Pinia](https://pinia.vuejs.org/) + `pinia-plugin-persistedstate` untuk state management
+- [Tailwind CSS](https://tailwindcss.com/) untuk styling
+- [vue3-tournament](https://www.npmjs.com/package/vue3-tournament) untuk render bagan turnamen
+- `jspdf` & `html2canvas` (di-*lazy-load*) untuk ekspor PDF/gambar
+
+## Prasyarat
+
+- Node.js **20.19+** atau **22.12+** (dibutuhkan oleh Vite 7 — versi Node yang lebih lama akan gagal saat `build`/`dev`)
+- Yarn (project ini menggunakan `packageManager: yarn` — lihat `package.json`)
+
+## Setup
+
+Install dependencies:
 
 ```bash
-# Clone repo
-git clone https://github.com/mujahidinnn/randomix.git
-cd randomix
-
-# Install dependencies
-npm install
-
-# Development
-npm run dev
-
-# Build production
-npm run build
+yarn install
 ```
 
----
+## Development Server
 
-## 📁 Struktur Proyek
+Jalankan development server di `http://localhost:3000`:
 
-```
-src/
-├── types/
-│   └── index.ts              # Semua TypeScript interfaces & constants
-├── lib/
-│   ├── balancing.ts          # Smart balancing algorithm (snake draft + greedy)
-│   ├── tournament.ts         # Tournament engine (3 format)
-│   └── export.ts             # Export center (5 format)
-├── store/
-│   └── useStore.ts           # Zustand store + localStorage persistence
-├── components/
-│   ├── PlayerManager.tsx     # Input & manajemen pemain
-│   ├── ConfigDashboard.tsx   # Konfigurasi tim & turnamen
-│   ├── ResultArena.tsx       # Tampilan hasil tim
-│   ├── TournamentView.tsx    # Bracket & jadwal turnamen
-│   └── ExportCenter.tsx      # Download & share hasil
-├── App.tsx                   # Root component & tab navigation
-├── main.tsx                  # Entry point
-└── index.css                 # Global styles + Tailwind
+```bash
+yarn dev
 ```
 
----
+## Production
 
-## ✨ Fitur
+Build untuk production:
 
-### 🧠 Smart Balancing Algorithm
-- **Snake Draft**: distribusi zigzag berdasarkan power ranking
-- **Greedy Balance**: selalu assign ke tim dengan power terendah
-- Otomatis memilih hasil dengan standard deviation terkecil
-- Mendukung level: **Newbie** (1), **Middle** (2), **Pro** (3)
+```bash
+yarn build
+```
 
-### 🏆 Tournament Engine
-| Format | Deskripsi |
-|--------|-----------|
-| Single Elimination | Sistem gugur — klik pemenang langsung di bracket |
-| Round Robin | Sistem liga — input skor, klasemen otomatis update |
-| Grup Stage | Fase grup otomatis, shuffle seeded |
+Preview hasil build secara lokal:
 
-### 📤 Export Center
-| Format | Library |
-|--------|---------|
-| Plain Text | `navigator.clipboard` |
-| WhatsApp | `navigator.clipboard` (format bold WA) |
-| PNG Image | `html-to-image` |
-| PDF | `jsPDF` |
-| Excel | `ExcelJS` (2 sheet: Overview + Detail) |
+```bash
+yarn preview
+```
 
-### 💾 Persistensi
-- Semua data tersimpan di **localStorage** via Zustand persist middleware
-- Data tidak hilang saat refresh browser
-- Zero backend, zero database
+Generate versi statis:
 
----
+```bash
+yarn generate
+```
 
-## 🎨 Design System
+Lihat [dokumentasi deployment Nuxt](https://nuxt.com/docs/getting-started/deployment) untuk detail lebih lanjut.
 
-- **Palet**: Electric Blue (`#00c6ff`) → Neon Green (`#00ff88`) gradient
-- **Theme**: Dark mode elegan
-- **UI**: Glassmorphism cards
-- **Typography**: Montserrat (headings) + Inter (body)
-- **Icons**: Lucide React
-- **Animation**: Framer Motion
+## Struktur Proyek
 
----
+```
+app/
+├── app.vue                 # Root component (loading indicator, page outlet, toast host)
+├── assets/css/main.css     # Design tokens & global a11y/motion defaults
+├── components/             # Komponen bersama (BaseButton, EmptyState, BaseSkeleton, AppToast)
+├── composables/useToast.ts # Sistem notifikasi toast global
+├── pages/
+│   ├── index.vue           # Landing page
+│   ├── generate.vue        # Form tambah pemain + generate tim
+│   └── create-cup.vue      # Bagan turnamen
+├── plugins/persist.client.ts
+└── stores/cup.ts           # State turnamen: tim, pertandingan, ronde, pemenang
+```
 
-## 🔧 Tech Stack
+## Environment Variables
 
-- **React 18** + **TypeScript 5**
-- **Tailwind CSS 3** (custom config)
-- **Framer Motion** (animasi transisi)
-- **Zustand** (state management + persistence)
-- **Vite 5** (build tool)
-- **Lucide React** (icons)
+| Variable                 | Default                        | Keterangan                                   |
+| ------------------------ | ------------------------------- | --------------------------------------------- |
+| `NUXT_PUBLIC_SITE_URL`   | `https://randomix.vercel.app`  | Dipakai untuk canonical URL & meta OpenGraph. Ganti bila pindah domain. |
 
----
+## Live Demo
 
-## 📝 License
+[randomix.vercel.app](https://randomix.vercel.app)
 
-MIT © 2025 Randomix
+## Dokumentasi Produk
+
+Lihat `PRD.md` (tidak di-commit, hanya lokal — lihat `.gitignore`) untuk detail requirement produk.
