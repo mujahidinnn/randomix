@@ -1,8 +1,21 @@
 /* Global baseline shared by every page — design tokens, a11y and motion defaults. */
 
 :root {
-  --color-brand-from: #34d399; /* green-400 */
-  --color-brand-to: #3b82f6; /* blue-500 */
+  --clay-bg-a: #eafaf3; /* pastel mint, sudut atas background halaman */
+  --clay-bg-b: #eef1fc; /* pastel lavender, sudut bawah background halaman */
+  --clay-surface: #f5f9f7; /* permukaan card/panel */
+  --clay-surface-alt: #ffffff; /* permukaan input/trigger select */
+  --clay-shadow-dark: rgba(163, 177, 198, 0.35);
+  --clay-shadow-light: rgba(255, 255, 255, 0.7);
+  --clay-text: #33415c;
+  --clay-text-muted: #7c8797;
+  --clay-accent: #34d399;
+  --clay-accent-dark: #0f9d67;
+  --clay-amber: #fbbf24;
+  --clay-amber-dark: #b45309;
+  --clay-danger: #fb7185;
+  --clay-danger-dark: #be123c;
+  --font-display: "Baloo 2", ui-rounded, "Segoe UI", sans-serif;
   color-scheme: light;
 }
 
@@ -20,12 +33,87 @@ body {
     Helvetica,
     Arial,
     sans-serif;
+  color: var(--clay-text);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
 }
 
 /* Keep a visible focus ring for keyboard users without adding one on mouse click. */
 :focus-visible {
-  outline: 2px solid white;
+  outline: 2px solid var(--clay-accent-dark);
   outline-offset: 2px;
+}
+
+/* Background pastel + dekorasi lembut: blob gradient blur di pojok + pola dot-grid
+   tipis. Blob & dot ditaruh di pseudo-element dengan z-index negatif supaya tidak
+   menambah shadow/kedalaman ke elemen clay di atasnya — cuma tekstur background. */
+.page-shell {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--clay-bg-a) 0%, var(--clay-bg-b) 100%);
+}
+.page-shell::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(28rem 28rem at 12% -8%, rgba(52, 211, 153, 0.35), transparent 60%),
+    radial-gradient(26rem 26rem at 95% 5%, rgba(167, 139, 250, 0.3), transparent 60%),
+    radial-gradient(24rem 24rem at 90% 100%, rgba(251, 191, 36, 0.18), transparent 60%);
+  filter: blur(10px);
+}
+.page-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(51, 65, 92, 0.14) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 55%, transparent 100%);
+}
+
+/* Permukaan dasar clay: rounded besar + warna pastel solid (tanpa transparansi/blur). */
+.clay-surface {
+  background: var(--clay-surface);
+  border-radius: 1.75rem;
+}
+
+/* Efek timbul (raised) khas claymorphism, tapi tipis — cukup untuk memberi
+   kedalaman lembut, bukan efek 3D yang berat. Saat ditekan, shadow mengecil
+   sedikit sebagai umpan balik. */
+.clay-raised {
+  box-shadow:
+    -2px -2px 5px var(--clay-shadow-light),
+    2px 2px 5px var(--clay-shadow-dark);
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+.clay-raised:active {
+  box-shadow:
+    -1px -1px 2px var(--clay-shadow-light),
+    1px 1px 2px var(--clay-shadow-dark);
+  transform: translateY(1px);
+}
+
+/* Efek terukir ke dalam (inset), dipakai untuk field input/trigger select supaya
+   terlihat seperti alur yang dipencet ke dalam permukaan clay — tipis, bukan
+   groove yang dalam. */
+.clay-inset {
+  background: var(--clay-surface-alt);
+  border-radius: 1rem;
+  border: 1.5px solid rgba(51, 65, 92, 0.18);
+  box-shadow:
+    inset -1px -1px 3px var(--clay-shadow-light),
+    inset 1px 1px 3px var(--clay-shadow-dark);
 }
 
 /* Respect the OS-level reduced-motion preference across all pages. */

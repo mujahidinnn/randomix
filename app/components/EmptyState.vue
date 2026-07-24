@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-center gap-3 py-10 text-center text-white/80">
+  <div class="flex flex-col items-center justify-center gap-3 py-10 text-center text-[var(--clay-text-muted)]">
     <component :is="icon" class="h-10 w-10 opacity-70" aria-hidden="true" />
     <p class="italic">{{ message }}</p>
     <slot name="action" />

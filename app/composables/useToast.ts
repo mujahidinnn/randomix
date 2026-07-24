@@ -12,6 +12,10 @@ export type Toast = {
 const toasts = ref<Toast[]>([]);
 let seq = 0;
 
+// Batas toast yang tampil bersamaan — tanpa ini, aksi beruntun (mis. assign beberapa
+// pemain pending sekaligus) bisa menumpuk notifikasi sampai menutupi seluruh form di mobile.
+const MAX_VISIBLE = 3;
+
 function dismiss(id: number) {
   toasts.value = toasts.value.filter((t) => t.id !== id);
 }
@@ -19,6 +23,10 @@ function dismiss(id: number) {
 function push(message: string, variant: ToastVariant = "info", duration = 3500) {
   const id = ++seq;
   toasts.value.push({ id, message, variant, duration });
+
+  while (toasts.value.length > MAX_VISIBLE) {
+    toasts.value.shift();
+  }
 
   if (duration > 0) {
     setTimeout(() => dismiss(id), duration);

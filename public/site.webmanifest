@@ -1,0 +1,23 @@
+{
+  "name": "Randomix — Buat Tim Olahraga Secara Adil & Acak",
+  "short_name": "Randomix",
+  "description": "Bagi pemain olahraga jadi tim secara adil dan acak, lengkap dengan bagan turnamen otomatis.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d9488",
+  "theme_color": "#3b82f6",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/randomix.png",
+      "sizes": "498x129",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

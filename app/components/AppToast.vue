@@ -10,7 +10,7 @@
         <div
           v-for="toast in toasts"
           :key="toast.id"
-          class="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl border px-4 py-3 shadow-lg backdrop-blur-md"
+          class="clay-raised pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-2xl px-4 py-3"
           :class="variantClasses[toast.variant]"
         >
           <component :is="variantIcon[toast.variant]" class="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
@@ -36,9 +36,9 @@ import { useToast } from "../composables/useToast";
 const { toasts, dismiss } = useToast();
 
 const variantClasses: Record<string, string> = {
-  success: "bg-emerald-50/95 border-emerald-200 text-emerald-800",
-  error: "bg-red-50/95 border-red-200 text-red-800",
-  info: "bg-white/95 border-slate-200 text-slate-800",
+  success: "bg-emerald-50 text-emerald-800",
+  error: "bg-rose-50 text-rose-800",
+  info: "bg-white text-slate-800",
 };
 
 const variantIcon: Record<string, any> = {

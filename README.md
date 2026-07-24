@@ -7,9 +7,11 @@ Randomix adalah aplikasi web untuk membagi pemain olahraga menjadi tim secara **
 ## Fitur Utama
 
 - **Generate Tim** — tambahkan pemain (dengan atau tanpa level skill: Newbie/Middle/Pro), tentukan jumlah tim, lalu acak. Saat mode level aktif, pembagian menggunakan algoritma greedy agar total skor tiap tim tetap seimbang.
-- **Buat Cup** — ubah hasil generate tim menjadi bagan turnamen otomatis, termasuk penanganan *bye* saat jumlah tim bukan pangkat dua.
+- **Penempatan Pemain Baru Pasca-Generate** — kalau ada pemain ditambahkan setelah tim di-generate (misal ada yang telat datang), pemain itu masuk daftar "Perlu Ditempatkan" dan bisa dipilih: masuk ke tim tertentu, otomatis ke tim paling sedikit anggotanya, atau bikin tim baru. Anggota yang sudah masuk tim juga bisa dipindah tim atau tim dibubarkan tanpa perlu generate ulang semua. Detail aturan lengkap ada di `PRD.md` §5.1.
+- **Buat Cup** — ubah hasil generate tim menjadi bagan turnamen otomatis, termasuk penanganan *bye* saat jumlah tim bukan pangkat dua. Tetap bisa dilanjutkan walau masih ada pemain pending (dengan peringatan).
 - **Ekspor Hasil** — download sebagai PDF/gambar, salin sebagai teks, atau share langsung ke WhatsApp.
 - **Persisted state** — progres tersimpan di `localStorage` (Pinia + `pinia-plugin-persistedstate`) sehingga tidak hilang saat refresh.
+- **Mobile-first** — form & aksi utama di `/generate` pakai sticky bottom bar di layar kecil supaya tombol Generate selalu terjangkau tanpa scroll; bagan turnamen di `/create-cup` bisa di-scroll horizontal di HP.
 
 ## Tech Stack
 
@@ -21,15 +23,16 @@ Randomix adalah aplikasi web untuk membagi pemain olahraga menjadi tim secara **
 
 ## Prasyarat
 
-- Node.js **20.19+** atau **22.12+** (dibutuhkan oleh Vite 7 — versi Node yang lebih lama akan gagal saat `build`/`dev`)
-- Yarn (project ini menggunakan `packageManager: yarn` — lihat `package.json`)
+- Node.js **20.19+** (lihat `.nvmrc` — dibutuhkan oleh Vite 7, versi Node yang lebih lama akan gagal saat `build`/`dev` dengan error `crypto.hash is not a function`). Kalau pakai `nvm`, jalankan `nvm use` di root project untuk otomatis pindah ke versi yang sesuai.
+- pnpm (project ini menggunakan `packageManager: pnpm` — lihat `package.json`; lockfile-nya `pnpm-lock.yaml`, jangan pakai `npm`/`yarn` supaya tidak dobel lockfile)
 
 ## Setup
 
 Install dependencies:
 
 ```bash
-yarn install
+nvm use
+pnpm install
 ```
 
 ## Development Server
@@ -37,7 +40,7 @@ yarn install
 Jalankan development server di `http://localhost:3000`:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 ## Production
@@ -45,19 +48,19 @@ yarn dev
 Build untuk production:
 
 ```bash
-yarn build
+pnpm build
 ```
 
 Preview hasil build secara lokal:
 
 ```bash
-yarn preview
+pnpm preview
 ```
 
 Generate versi statis:
 
 ```bash
-yarn generate
+pnpm generate
 ```
 
 Lihat [dokumentasi deployment Nuxt](https://nuxt.com/docs/getting-started/deployment) untuk detail lebih lanjut.
@@ -66,16 +69,21 @@ Lihat [dokumentasi deployment Nuxt](https://nuxt.com/docs/getting-started/deploy
 
 ```
 app/
-├── app.vue                 # Root component (loading indicator, page outlet, toast host)
-├── assets/css/main.css     # Design tokens & global a11y/motion defaults
-├── components/             # Komponen bersama (BaseButton, EmptyState, BaseSkeleton, AppToast)
-├── composables/useToast.ts # Sistem notifikasi toast global
+├── app.vue                       # Root component (loading indicator, page outlet, toast host)
+├── assets/css/main.css           # Design tokens & global a11y/motion defaults
+├── components/                   # Komponen bersama
+│   ├── BaseButton.vue            # Tombol dasar (variant primary/secondary/ghost/accent)
+│   ├── EmptyState.vue
+│   ├── BaseSkeleton.vue
+│   ├── AppToast.vue
+│   └── TeamAssignSelect.vue      # Select "pilih tim/otomatis/tim baru", dipakai di panel pending & pindah tim
+├── composables/useToast.ts       # Sistem notifikasi toast global
 ├── pages/
-│   ├── index.vue           # Landing page
-│   ├── generate.vue        # Form tambah pemain + generate tim
-│   └── create-cup.vue      # Bagan turnamen
+│   ├── index.vue                 # Landing page
+│   ├── generate.vue              # Form tambah pemain + generate tim + penempatan pemain pasca-generate
+│   └── create-cup.vue            # Bagan turnamen
 ├── plugins/persist.client.ts
-└── stores/cup.ts           # State turnamen: tim, pertandingan, ronde, pemenang
+└── stores/cup.ts                 # State turnamen: tim, pertandingan, ronde, pemenang
 ```
 
 ## Environment Variables

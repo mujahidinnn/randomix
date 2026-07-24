@@ -1,2 +1,4 @@
 User-Agent: *
 Disallow:
+
+Sitemap: https://randomix.vercel.app/sitemap.xml

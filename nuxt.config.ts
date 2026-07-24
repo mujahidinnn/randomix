@@ -41,6 +41,8 @@ export default defineNuxtConfig({
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "theme-color", content: "#3b82f6" },
+        // Angka yang mirip nomor telepon (mis. jumlah pemain) tidak perlu di-autolink jadi tel: link di mobile.
+        { name: "format-detection", content: "telephone=no" },
         {
           name: "description",
           content:
@@ -63,7 +65,13 @@ export default defineNuxtConfig({
           rel: "stylesheet",
           href: "https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap",
         },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap",
+        },
         { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        { rel: "apple-touch-icon", href: "/randomix.png" },
+        { rel: "manifest", href: "/site.webmanifest" },
       ],
     },
   },

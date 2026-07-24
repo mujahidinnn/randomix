@@ -1,11 +1,11 @@
 <template>
   <component
-    :is="tag"
+    :is="resolvedTag"
     :type="tag === 'button' ? type : undefined"
     :disabled="tag === 'button' ? disabled || loading : undefined"
     :aria-disabled="disabled || loading"
     :aria-busy="loading"
-    class="inline-flex items-center justify-center gap-2 rounded-xl font-bold shadow-md outline-none transition focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+    class="clay-raised inline-flex items-center justify-center gap-2 rounded-2xl font-bold outline-none [font-family:var(--font-display)] disabled:cursor-not-allowed disabled:opacity-60"
     :class="[sizeClasses, variantClasses]"
   >
     <svg
@@ -25,12 +25,13 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { NuxtLink } from "#components";
 
 const props = withDefaults(
   defineProps<{
     tag?: "button" | "NuxtLink" | "a";
     type?: "button" | "submit" | "reset";
-    variant?: "primary" | "secondary" | "ghost";
+    variant?: "primary" | "secondary" | "ghost" | "accent";
     size?: "sm" | "md" | "lg";
     disabled?: boolean;
     loading?: boolean;
@@ -45,6 +46,8 @@ const props = withDefaults(
   }
 );
 
+const resolvedTag = computed(() => (props.tag === "NuxtLink" ? NuxtLink : props.tag));
+
 const sizeClasses = computed(
   () =>
     ({
@@ -57,9 +60,10 @@ const sizeClasses = computed(
 const variantClasses = computed(
   () =>
     ({
-      primary: "bg-white text-blue-600 hover:bg-slate-100",
-      secondary: "bg-white/20 text-white border border-white/30 hover:bg-white/30",
-      ghost: "bg-transparent text-white hover:bg-white/10",
+      primary: "bg-[var(--clay-accent)] text-emerald-950",
+      secondary: "bg-[var(--clay-surface-alt)] text-[var(--clay-text)]",
+      ghost: "!shadow-none bg-transparent text-[var(--clay-text)] hover:bg-black/5",
+      accent: "bg-[var(--clay-amber)] text-amber-950",
     }[props.variant])
 );
 </script>

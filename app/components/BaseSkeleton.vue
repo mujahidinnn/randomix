@@ -1,6 +1,6 @@
 <template>
   <div
-    class="animate-pulse rounded-lg bg-white/25"
+    class="animate-pulse rounded-lg bg-slate-300/50"
     :style="{ width, height }"
     role="presentation"
     aria-hidden="true"
