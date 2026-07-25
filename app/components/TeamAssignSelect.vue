@@ -2,14 +2,16 @@
   <BaseSelect
     :model-value="value"
     :options="selectOptions"
-    :label="label"
-    placeholder="Pilih penempatan…"
+    :label="label ?? t('common.teamAssignSelect.label')"
+    :placeholder="t('common.teamAssignSelect.placeholder')"
     @update:model-value="handleChange"
   />
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+
+const { t } = useI18n();
 
 const props = withDefaults(
   defineProps<{
@@ -19,24 +21,23 @@ const props = withDefaults(
   }>(),
   {
     showAuto: true,
-    label: "Pilih penempatan tim",
   }
 );
 
 const emit = defineEmits<{ assign: [value: "auto" | "new" | number] }>();
 
-// null = placeholder ("Pilih penempatan…"); di-reset ke null setiap kali sebuah
-// penempatan sudah di-emit, supaya select ini bisa dipakai berulang kali.
+// null = placeholder; di-reset ke null setiap kali sebuah penempatan sudah
+// di-emit, supaya select ini bisa dipakai berulang kali.
 const value = ref<string | number | null>(null);
 
 const selectOptions = computed(() => {
   const options: { value: string | number; label: string }[] = [];
   if (props.showAuto && props.teams.length) {
-    options.push({ value: "auto", label: "⚡ Otomatis (seimbang)" });
+    options.push({ value: "auto", label: t("common.teamAssignSelect.auto") });
   }
-  options.push({ value: "new", label: "➕ Buat Tim Baru" });
+  options.push({ value: "new", label: t("common.teamAssignSelect.new") });
   props.teams.forEach((team, idx) => {
-    options.push({ value: idx, label: `${team.name} (${team.count} pemain)` });
+    options.push({ value: idx, label: t("common.teamAssignSelect.existing", { name: team.name, count: team.count }) });
   });
   return options;
 });

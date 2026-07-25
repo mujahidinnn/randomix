@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col gap-6">
     <div>
-      <h3 class="mb-3 text-sm font-bold text-[var(--clay-text)] sm:text-base">Klasemen</h3>
+      <h3 class="mb-3 text-sm font-bold text-[var(--clay-text)] sm:text-base">{{ t("cup.roundRobin.standingsHeading") }}</h3>
       <CupStandingsTable :teams="cupStore.teams" :standings="cupStore.roundRobinStandings" />
     </div>
 
     <div>
       <h3 class="mb-3 text-sm font-bold text-[var(--clay-text)] sm:text-base">
-        Pertandingan ({{ playedCount }}/{{ cupStore.fixtures.length }} selesai)
+        {{ t("cup.roundRobin.fixturesHeading", { played: playedCount, total: cupStore.fixtures.length }) }}
       </h3>
       <ul class="space-y-2">
         <CupFixtureRow
@@ -29,11 +29,12 @@ import { useToast } from "../composables/useToast";
 
 const cupStore = useCupStore();
 const toast = useToast();
+const { t } = useI18n();
 
 const playedCount = computed(() => cupStore.fixtures.filter((f) => f.played).length);
 
 function saveFixture(fixtureId: number, score1: number, score2: number) {
   cupStore.recordFixtureResult(fixtureId, score1, score2);
-  toast.success("Skor tersimpan.");
+  toast.success(t("cup.roundRobin.scoreSaved"));
 }
 </script>

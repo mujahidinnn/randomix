@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <div
-      class="pointer-events-none fixed inset-x-0 top-4 z-[100] flex flex-col items-center gap-2 px-4 sm:top-6"
+      class="pointer-events-none fixed inset-x-0 top-[max(1rem,env(safe-area-inset-top))] z-[100] flex flex-col items-center gap-2 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:top-[max(1.5rem,env(safe-area-inset-top))]"
       aria-live="polite"
       aria-atomic="true"
       role="status"
@@ -18,7 +18,7 @@
           <button
             type="button"
             class="ml-auto shrink-0 rounded-full p-1 opacity-70 transition hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
-            :aria-label="`Tutup notifikasi: ${toast.message}`"
+            :aria-label="t('common.toast.closeAria', { message: toast.message })"
             @click="dismiss(toast.id)"
           >
             <XMarkIcon class="h-4 w-4" />
@@ -34,6 +34,7 @@ import { XMarkIcon, CheckCircleIcon, ExclamationCircleIcon, InformationCircleIco
 import { useToast } from "../composables/useToast";
 
 const { toasts, dismiss } = useToast();
+const { t } = useI18n();
 
 const variantClasses: Record<string, string> = {
   success: "bg-emerald-50 text-emerald-800",

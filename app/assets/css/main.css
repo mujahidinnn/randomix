@@ -1,12 +1,14 @@
-/* Global baseline shared by every page — design tokens, a11y and motion defaults. */
-
 :root {
-  --clay-bg-a: #eafaf3; /* pastel mint, sudut atas background halaman */
-  --clay-bg-b: #eef1fc; /* pastel lavender, sudut bawah background halaman */
-  --clay-surface: #f5f9f7; /* permukaan card/panel */
-  --clay-surface-alt: #ffffff; /* permukaan input/trigger select */
-  --clay-shadow-dark: rgba(163, 177, 198, 0.35);
-  --clay-shadow-light: rgba(255, 255, 255, 0.7);
+  --page-bg-from: #34d399;
+  --page-bg-via: #14b8a6;
+  --page-bg-to: #2563eb;
+  --page-text: #ffffff;
+  --page-text-muted: rgba(255, 255, 255, 0.8);
+
+  --clay-surface: #ffffff;
+  --clay-surface-alt: #f1f5f9;
+  --clay-shadow-dark: rgba(15, 23, 42, 0.22);
+  --clay-shadow-light: rgba(255, 255, 255, 0.9);
   --clay-text: #33415c;
   --clay-text-muted: #7c8797;
   --clay-accent: #34d399;
@@ -42,20 +44,17 @@ h3 {
   font-family: var(--font-display);
 }
 
-/* Keep a visible focus ring for keyboard users without adding one on mouse click. */
 :focus-visible {
-  outline: 2px solid var(--clay-accent-dark);
+  outline: 3px solid white;
   outline-offset: 2px;
 }
 
-/* Background pastel + dekorasi lembut: blob gradient blur di pojok + pola dot-grid
-   tipis. Blob & dot ditaruh di pseudo-element dengan z-index negatif supaya tidak
-   menambah shadow/kedalaman ke elemen clay di atasnya — cuma tekstur background. */
 .page-shell {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: linear-gradient(160deg, var(--clay-bg-a) 0%, var(--clay-bg-b) 100%);
+  background: linear-gradient(135deg, var(--page-bg-from) 0%, var(--page-bg-via) 45%, var(--page-bg-to) 100%);
+  color: var(--page-text);
 }
 .page-shell::before {
   content: "";
@@ -64,10 +63,10 @@ h3 {
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(28rem 28rem at 12% -8%, rgba(52, 211, 153, 0.35), transparent 60%),
-    radial-gradient(26rem 26rem at 95% 5%, rgba(167, 139, 250, 0.3), transparent 60%),
-    radial-gradient(24rem 24rem at 90% 100%, rgba(251, 191, 36, 0.18), transparent 60%);
-  filter: blur(10px);
+    radial-gradient(30rem 30rem at 90% -10%, rgba(253, 230, 138, 0.4), transparent 60%),
+    radial-gradient(32rem 32rem at -10% 110%, rgba(30, 58, 138, 0.45), transparent 60%),
+    radial-gradient(24rem 24rem at 100% 100%, rgba(236, 72, 153, 0.25), transparent 60%);
+  filter: blur(40px);
 }
 .page-shell::after {
   content: "";
@@ -75,48 +74,87 @@ h3 {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image: radial-gradient(rgba(51, 65, 92, 0.14) 1px, transparent 1px);
-  background-size: 22px 22px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.35) 1.5px, transparent 1.5px);
+  background-size: 26px 26px;
   mask-image: radial-gradient(120% 90% at 50% 0%, #000 55%, transparent 100%);
 }
 
-/* Permukaan dasar clay: rounded besar + warna pastel solid (tanpa transparansi/blur). */
 .clay-surface {
   background: var(--clay-surface);
   border-radius: 1.75rem;
+  color: var(--clay-text);
 }
 
-/* Efek timbul (raised) khas claymorphism, tapi tipis — cukup untuk memberi
-   kedalaman lembut, bukan efek 3D yang berat. Saat ditekan, shadow mengecil
-   sedikit sebagai umpan balik. */
 .clay-raised {
   box-shadow:
     -2px -2px 5px var(--clay-shadow-light),
-    2px 2px 5px var(--clay-shadow-dark);
+    2px 4px 10px var(--clay-shadow-dark);
   transition:
-    box-shadow 0.15s ease,
-    transform 0.15s ease;
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+.clay-raised:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    -3px -4px 8px var(--clay-shadow-light),
+    3px 8px 16px var(--clay-shadow-dark);
 }
 .clay-raised:active {
+  transform: translateY(1px);
   box-shadow:
     -1px -1px 2px var(--clay-shadow-light),
-    1px 1px 2px var(--clay-shadow-dark);
-  transform: translateY(1px);
+    1px 1px 3px var(--clay-shadow-dark);
 }
 
-/* Efek terukir ke dalam (inset), dipakai untuk field input/trigger select supaya
-   terlihat seperti alur yang dipencet ke dalam permukaan clay — tipis, bukan
-   groove yang dalam. */
 .clay-inset {
   background: var(--clay-surface-alt);
   border-radius: 1rem;
-  border: 1.5px solid rgba(51, 65, 92, 0.18);
+  border: 1.5px solid rgba(51, 65, 92, 0.14);
   box-shadow:
     inset -1px -1px 3px var(--clay-shadow-light),
-    inset 1px 1px 3px var(--clay-shadow-dark);
+    inset 1px 1px 3px rgba(15, 23, 42, 0.1);
 }
 
-/* Respect the OS-level reduced-motion preference across all pages. */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes floatY {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--float-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-8px) rotate(var(--float-rotate, 0deg));
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease both;
+}
+.animate-scaleIn {
+  animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.animate-float {
+  animation: floatY 4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

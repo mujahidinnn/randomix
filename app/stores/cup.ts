@@ -1,4 +1,3 @@
-// stores/cup.ts
 import { defineStore } from "pinia";
 import { shuffleArray } from "../utils/shuffle";
 import { buildStandings, type Fixture, type Standing } from "../utils/standings";
@@ -15,6 +14,8 @@ export type Match = {
   teams: (number | null)[]; // team ids; null = not decided yet / bye slot
   winner?: number;
   loser?: number;
+  score1?: number | null;
+  score2?: number | null;
 };
 export type Round = { matchs: Match[] };
 export type TournamentType = "elimination" | "roundrobin" | "group";
@@ -44,7 +45,6 @@ function buildAllPairsFixtures(teamIds: number[]): Fixture[] {
   return fixtures;
 }
 
-// Pemenang final round elimination (dipakai juga oleh babak knockout hasil grup).
 function bracketChampion(rounds: Round[], teams: Team[]): Team | null {
   const finalRound = rounds[rounds.length - 1];
   const finalMatch = finalRound?.matchs[0];
@@ -59,11 +59,12 @@ export const useCupStore = defineStore("cup", {
     matches: [] as Match[],
     useLevel: false,
     teamCount: 2,
+    useScore: false,
     rounds: [] as Round[],
     tournamentType: "elimination" as TournamentType,
-    fixtures: [] as Fixture[], // round robin
-    groups: [] as Group[], // group stage
-    knockoutStarted: false, // group stage: babak knockout sudah dibuat dari top-N tiap grup
+    fixtures: [] as Fixture[],
+    groups: [] as Group[],
+    knockoutStarted: false,
   }),
 
   getters: {
@@ -88,12 +89,11 @@ export const useCupStore = defineStore("cup", {
   },
 
   actions: {
-    setTeams(teams: Team[] | any[]) {
-      // jika input berupa array of arrays, ubah jadi array of Team
+    setTeams(teams: Team[] | any[], teamNamePrefix = "Tim") {
       if (teams.length > 0 && !("id" in teams[0])) {
         this.teams = (teams as any[]).map((members, idx) => ({
           id: idx + 1,
-          name: `Tim ${idx + 1}`,
+          name: `${teamNamePrefix} ${idx + 1}`,
           members: members.map((m: any) => ({
             name: m.name,
             level: m.level ?? null,
@@ -105,15 +105,24 @@ export const useCupStore = defineStore("cup", {
       }
     },
 
+    setUseScore(value: boolean) {
+      this.useScore = value;
+    },
+
+    setMatchScore(matchId: number, slot: 0 | 1, score: number | null) {
+      const match = this.matches.find((m) => m.id === matchId);
+      if (!match) return;
+      if (slot === 0) match.score1 = score;
+      else match.score2 = score;
+    },
+
     setMatchResult(matchId: number, winnerId: number) {
       const match = this.matches.find((m) => m.id === matchId);
       if (!match) return;
-      // guard: winner must actually be one of the two contenders in this match
       if (!match.teams.includes(winnerId)) return;
 
-      // overturn: match ini sudah pernah diputuskan dengan pemenang berbeda —
-      // bersihkan dulu semua jejak propagasi lama sebelum menimpa dengan yang baru,
-      // supaya ronde berikutnya tidak menyisakan hasil yang sudah tidak valid.
+      // Overturn: bersihkan dulu jejak propagasi lama sebelum menimpa dengan
+      // yang baru, supaya ronde berikutnya tidak menyisakan hasil yang invalid.
       const previousWinner = match.winner;
       if (previousWinner != null && previousWinner !== winnerId) {
         this.clearDownstream(match.id, previousWinner);
@@ -131,7 +140,6 @@ export const useCupStore = defineStore("cup", {
       this.propagateWinner(match.id, winnerId);
     },
 
-    // dorong pemenang ke slot yang sesuai di ronde berikutnya
     propagateWinner(matchId: number, winnerId: number) {
       for (let r = 0; r < this.rounds.length - 1; r++) {
         const idx = this.rounds[r].matchs.findIndex((m) => m.id === matchId);
@@ -145,10 +153,9 @@ export const useCupStore = defineStore("cup", {
       }
     },
 
-    // Bersihkan efek berantai dari sebuah pemenang lama yang sudah terlanjur
-    // dipropagasi (dan mungkin sudah menang lagi di ronde-ronde setelahnya),
-    // supaya overturn hasil match tidak meninggalkan bracket dalam keadaan
-    // tidak konsisten (tim yang seharusnya tersingkir masih tampak lolos).
+    // Bersihkan efek berantai pemenang lama yang sudah terlanjur dipropagasi
+    // (dan mungkin sudah menang lagi di ronde setelahnya), supaya overturn
+    // tidak meninggalkan bracket dalam keadaan tidak konsisten.
     clearDownstream(matchId: number, teamId: number) {
       for (let r = 0; r < this.rounds.length - 1; r++) {
         const idx = this.rounds[r].matchs.findIndex((m) => m.id === matchId);
@@ -187,12 +194,16 @@ export const useCupStore = defineStore("cup", {
       useLevel,
       teamCount,
       tournamentType,
+      teamNamePrefix,
+      groupNamePrefix,
     }: {
       players?: Player[];
       teams?: any[];
       useLevel?: boolean;
       teamCount?: number;
       tournamentType?: TournamentType;
+      teamNamePrefix?: string;
+      groupNamePrefix?: string;
     }) {
       if (players) this.players = players;
       if (typeof useLevel === "boolean") this.useLevel = useLevel;
@@ -200,23 +211,20 @@ export const useCupStore = defineStore("cup", {
       if (tournamentType) this.tournamentType = tournamentType;
 
       if (teams) {
-        this.setTeams(teams);
+        this.setTeams(teams, teamNamePrefix);
         if (this.tournamentType === "roundrobin") this.generateRoundRobin();
-        else if (this.tournamentType === "group") this.generateGroupStage();
+        else if (this.tournamentType === "group") this.generateGroupStage(groupNamePrefix);
         else this.generateBracket();
       }
     },
 
-    // Bangun seluruh bracket single-elimination sekaligus, termasuk bye
-    // (tim yang otomatis lolos ronde pertama bila jumlah tim bukan pangkat dua).
-    // `seedTeamIds` opsional dipakai untuk membangun babak knockout dari top-N
-    // tiap grup (lihat buildKnockoutFromGroups) — default-nya seluruh this.teams.
+    // `seedTeamIds` opsional dipakai untuk babak knockout dari top-N tiap grup
+    // (lihat buildKnockoutFromGroups) — default-nya seluruh this.teams.
     generateBracket(seedTeamIds?: number[]) {
       const ids = seedTeamIds ?? this.teams.map((t) => t.id);
       const n = ids.length;
 
       if (n < 2) {
-        // tidak cukup tim untuk membuat turnamen — reset agar UI menampilkan empty state
         this.matches = [];
         this.rounds = [];
         return;
@@ -233,7 +241,6 @@ export const useCupStore = defineStore("cup", {
       for (let m = 0; m < totalFirstRoundMatches; m++) {
         const a = shuffledIds[pointer++] ?? null;
         if (m < byes) {
-          // bye: hanya satu tim di slot ini, otomatis menang tanpa bertanding
           firstRound.push({ id: nextId(), teams: [a], winner: a ?? undefined });
         } else {
           const b = shuffledIds[pointer++] ?? null;
@@ -257,7 +264,6 @@ export const useCupStore = defineStore("cup", {
         rounds.push({ matchs: nextRound });
         allMatches.push(...nextRound);
 
-        // langsung salurkan bye/pemenang yang sudah diketahui ke ronde berikutnya
         previousRound.forEach((match, i) => {
           if (match.winner != null) {
             nextRound[Math.floor(i / 2)].teams[i % 2] = match.winner;
@@ -271,14 +277,10 @@ export const useCupStore = defineStore("cup", {
       this.matches = allMatches;
       this.rounds = rounds;
 
-      // NB: status tim ber-bye SENGAJA tidak di-set "win" di sini — semua tim
-      // mulai dari "pending" ("Menunggu") seragam begitu cup baru dibuat. Tim
-      // ber-bye tetap otomatis lolos di struktur bracket (match-nya sudah
-      // punya winner), tapi badge status di Daftar Tim baru berubah setelah
-      // ada pertandingan nyata yang diputuskan.
+      // Status tim ber-bye sengaja tidak di-set "win" di sini — semua tim mulai
+      // dari "pending" seragam, meski bye-nya sudah otomatis lolos di bracket.
     },
 
-    // ── ROUND ROBIN ──────────────────────────────────────────
     generateRoundRobin() {
       this.fixtures = buildAllPairsFixtures(this.teams.map((t) => t.id));
     },
@@ -291,15 +293,14 @@ export const useCupStore = defineStore("cup", {
       fixture.played = true;
     },
 
-    // ── GROUP STAGE ──────────────────────────────────────────
-    generateGroupStage() {
+    generateGroupStage(groupNamePrefix = "Grup") {
       const shuffledIds = shuffleArray(this.teams.map((t) => t.id));
       const n = Math.max(2, Math.round(this.teamCount / 4));
       const groupNames = "ABCDEFGH";
 
       const groups: Group[] = Array.from({ length: n }, (_, i) => ({
         id: nextId(),
-        name: `Grup ${groupNames[i] ?? String(i + 1)}`,
+        name: `${groupNamePrefix} ${groupNames[i] ?? String(i + 1)}`,
         teamIds: [],
         fixtures: [],
       }));
@@ -345,6 +346,7 @@ export const useCupStore = defineStore("cup", {
       this.fixtures = [];
       this.groups = [];
       this.knockoutStarted = false;
+      this.useScore = false;
     },
   },
 

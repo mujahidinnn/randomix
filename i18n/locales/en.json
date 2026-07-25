@@ -1,0 +1,269 @@
+{
+  "locale": {
+    "switcherLabel": "Choose language"
+  },
+  "common": {
+    "logoAlt": "Randomix logo",
+    "confirmDialog": {
+      "confirm": "Yes, continue",
+      "cancel": "Cancel"
+    },
+    "select": {
+      "defaultLabel": "Select an option",
+      "placeholder": "Select..."
+    },
+    "toast": {
+      "closeAria": "Dismiss notification: {message}"
+    },
+    "teamAssignSelect": {
+      "placeholder": "Choose a team…",
+      "label": "Choose a team",
+      "auto": "⚡ Auto (balanced)",
+      "new": "➕ Create New Team",
+      "existing": "{name} ({count} players)"
+    },
+    "export": {
+      "downloadPdf": "Download PDF",
+      "downloadImage": "Download Image",
+      "copyText": "Copy Text",
+      "shareWhatsapp": "Share on WhatsApp",
+      "copyError": "Couldn't copy the text. Try copying it manually.",
+      "clipboardUnavailable": "Clipboard API is unavailable",
+      "whatsappPopupBlocked": "Popup blocked by browser. Allow popups to share on WhatsApp.",
+      "imageError": "Couldn't create the image. Please try again.",
+      "pdfError": "Couldn't create the PDF. Please try again.",
+      "generateBy": "Generated with randomix",
+      "generateByWa": "_Generated with *randomix*_"
+    },
+    "roundTitle": {
+      "final": "Final",
+      "semifinal": "Semifinal",
+      "quarterfinal": "Quarterfinal",
+      "roundN": "Round {n}"
+    },
+    "matchLabel": {
+      "bye": "BYE",
+      "tbd": "TBD",
+      "unknownTeam": "?"
+    }
+  },
+  "home": {
+    "hero": {
+      "titleLead": "Build your sports teams",
+      "titleHighlight": "fair & fun!"
+    },
+    "cta": "Start Building Teams",
+    "features": {
+      "random": {
+        "title": "Random & Fair",
+        "description": "Randomized team split, optionally weighted by skill level."
+      },
+      "bracket": {
+        "title": "Tournament Bracket",
+        "description": "Continue straight into a single-elimination bracket, no re-entry needed."
+      },
+      "share": {
+        "title": "Share Results",
+        "description": "Export as PDF, image, text, or share directly to WhatsApp."
+      }
+    },
+    "footer": "© {year} Randomix. All rights reserved.",
+    "seo": {
+      "title": "Build Sports Teams Fairly & Randomly",
+      "description": "Randomix helps you split sports teams fairly and randomly in seconds, complete with an automatic tournament bracket.",
+      "ogTitle": "Randomix — Build Sports Teams Fairly & Randomly",
+      "ogDescription": "Split players into balanced teams, generate a tournament bracket, then share the results as an image, PDF, or WhatsApp.",
+      "twitterDescription": "Split players into balanced teams instantly, complete with a tournament bracket.",
+      "jsonLdDescription": "Randomix helps you split sports teams fairly and randomly, complete with an automatic tournament bracket."
+    }
+  },
+  "generate": {
+    "header": {
+      "back": "Back to home",
+      "title": "Randomly Generate Sports Teams",
+      "step1": "1. Players",
+      "step2": "2. Team Count",
+      "step3": "3. Results"
+    },
+    "form": {
+      "heading": "Add Player",
+      "useLevel": "Use Skill Level",
+      "namePlaceholder": "Player name",
+      "nameLabel": "Player name",
+      "levelLabel": "Player level",
+      "submit": "Add Player"
+    },
+    "levels": {
+      "newbie": "Newbie",
+      "middle": "Middle",
+      "pro": "Pro"
+    },
+    "playerList": {
+      "total": "Total {count}",
+      "levelCount": "{level} {count}",
+      "max": "Max {max}",
+      "clearAll": "Clear All",
+      "pendingBadge": "Not on a team yet",
+      "removeAria": "Remove player {name}",
+      "empty": "No players yet"
+    },
+    "pending": {
+      "heading": "🆕 Needs Placement ({count})",
+      "autoAll": "⚡ Auto-place All",
+      "helper": "These players were added after teams were made. Existing teams stay the same unless you choose here.",
+      "assignLabel": "Place {name} on a team",
+      "continueWithout": "Continue Without Them →"
+    },
+    "teamCount": {
+      "label": "Team Count:",
+      "generate": "Generate Teams",
+      "regenerate": "Regenerate",
+      "tournamentType": "Tournament Type",
+      "createCup": "Create Tournament"
+    },
+    "results": {
+      "empty": "Team results will show up here once you generate.",
+      "teamHeading": "Team {number} ({count})",
+      "disband": "Disband",
+      "moveMemberAria": "Move {name} to another team",
+      "moveMemberLabel": "Move {name} to team"
+    },
+    "exportCapture": {
+      "teamHeading": "Team {number}"
+    },
+    "seo": {
+      "title": "Generate Teams",
+      "description": "Add player names, then randomly and fairly generate sports teams, with or without accounting for skill level.",
+      "ogTitle": "Generate Teams — Randomix",
+      "ogDescription": "Add player names, then randomly and fairly generate sports teams in seconds."
+    },
+    "validation": {
+      "maxReached": "Reached the maximum of {max} players.",
+      "duplicateName": "That player name already exists.",
+      "teamCountNaN": "Team count must be a number.",
+      "teamCountNotInteger": "Team count must be a whole number.",
+      "teamCountExceeds": "Team count can't exceed the number of players ({max}).",
+      "teamCountMin": "At least 2 teams required."
+    },
+    "toast": {
+      "maxPlayers": "Maximum of {max} players.",
+      "playerAddedPending": "{name} was added. Choose a team for them below.",
+      "playerRemoved": "{name} was removed from their team.",
+      "clearAllTitle": "Clear all players?",
+      "clearAllMessage": "{count} players and the teams already made will be removed.",
+      "clearedAll": "All players cleared.",
+      "needTwoPlayers": "Add at least 2 players to generate teams.",
+      "needTwoTeams": "At least 2 teams required.",
+      "teamsGenerated": "Teams generated successfully!",
+      "playerAssigned": "{name} joined Team {teamNumber}.",
+      "playerNewTeam": "{name} formed new Team {teamNumber}.",
+      "allPendingAssigned": "All new players have been placed.",
+      "memberMovedNew": "{name} moved to new Team {teamNumber}.",
+      "memberMovedAuto": "{name} was auto-moved to Team {teamNumber}.",
+      "memberMoved": "{name} moved to Team {teamNumber}.",
+      "teamDisbanded": "Team {teamNumber} disbanded.",
+      "disbandTitle": "Disband this team?",
+      "disbandMessage": "Disband Team {teamNumber}? {count} players will return to the unplaced list.",
+      "needTeamsForCup": "Generate at least 2 teams first.",
+      "pendingBeforeCup": "{count} players aren't on a team yet. Place them below, or continue without them.",
+      "textCopied": "Team results copied!"
+    },
+    "shareText": {
+      "header": "Team Results:",
+      "headerWa": "*Team Results:*",
+      "teamLine": "Team {number}:",
+      "teamLineWa": "*Team {number}:*"
+    }
+  },
+  "cup": {
+    "header": {
+      "back": "Back to the generate page",
+      "title": "Tournament Bracket",
+      "sectionAria": "Tournament bracket"
+    },
+    "champion": "Champion: {name}",
+    "daftarTim": "Team List",
+    "resetButton": "Start New Tournament",
+    "empty": "No tournament yet — create one on the Generate page.",
+    "emptyAction": "Go to Generate Page",
+    "status": {
+      "win": "Winning",
+      "lose": "Eliminated",
+      "pending": "Waiting"
+    },
+    "seo": {
+      "title": "Tournament Bracket",
+      "description": "View and manage the tournament bracket you created on Randomix.",
+      "ogTitle": "Tournament Bracket — Randomix"
+    },
+    "toast": {
+      "textCopied": "Tournament results copied!",
+      "resetTitle": "Start a new tournament?",
+      "resetMessage": "Your current tournament progress will be lost.",
+      "resetDone": "Tournament reset."
+    },
+    "shareText": {
+      "header": "Tournament Results",
+      "champion": "🏆 Champion: {name}",
+      "winSuffix": " -> Won: {name}",
+      "standingsHeading": "Standings",
+      "fixturesHeading": "Fixtures",
+      "knockoutHeading": "Knockout Stage"
+    },
+    "typeSelector": {
+      "ariaLabel": "Tournament type",
+      "elimination": { "label": "Tournament Bracket", "description": "Single elimination" },
+      "roundrobin": { "label": "Round Robin", "description": "Everyone plays everyone" },
+      "group": { "label": "Group Stage", "description": "Groups + knockout" }
+    },
+    "standingsTable": {
+      "rank": "#",
+      "team": "Team",
+      "played": "Pld",
+      "won": "W",
+      "drawn": "D",
+      "lost": "L",
+      "gf": "GF",
+      "ga": "GA",
+      "gd": "GD",
+      "points": "Pts"
+    },
+    "fixtureRow": {
+      "scoreAria": "Score for {team}",
+      "vs": "vs"
+    },
+    "elimination": {
+      "useScore": "Use scores",
+      "useScoreLabel": "Track match scores",
+      "helperScored": "Enter each team's score and the winner is set automatically. You can also click a team name to set the winner manually.",
+      "helperManual": "Click the winning team's name to advance to the next round.",
+      "progress": "{decided}/{total} matches done",
+      "swipeHint": "Swipe to see the next round →",
+      "scoreAria": "Score for {team}",
+      "advanced": "{name} advances to the next round!",
+      "emptySlot": "This slot doesn't have a team yet.",
+      "overturnTitle": "Change the match winner?",
+      "overturnMessage": "Progress in the next round that came from this match's result will be reset to {name}.",
+      "overturnFallbackName": "this team",
+      "walkoverTitle": "Win this match now?",
+      "walkoverMessage": "The opponent for this match hasn't been decided yet. {name} will advance immediately.",
+      "walkoverFallbackName": "This team",
+      "legendByeLabel": "= team auto-advances with no opponent (odd number of teams)",
+      "legendTbdLabel": "= slot not filled yet, waiting on the previous match's winner"
+    },
+    "roundRobin": {
+      "standingsHeading": "Standings",
+      "fixturesHeading": "Fixtures ({played}/{total} done)",
+      "scoreSaved": "Score saved."
+    },
+    "groupStage": {
+      "groupNamePrefix": "Group",
+      "allPlayed": "All group matches are done.",
+      "notAllPlayed": "Fill in all group match scores first to move on to the knockout stage.",
+      "buildKnockout": "Start Knockout Stage",
+      "knockoutHeading": "Knockout Stage",
+      "scoreSaved": "Score saved.",
+      "knockoutBuilt": "Knockout stage created from the top 2 teams in each group!"
+    }
+  }
+}

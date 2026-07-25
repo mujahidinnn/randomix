@@ -1,84 +1,79 @@
 <template>
   <main
-    class="page-shell flex min-h-screen flex-col items-center p-4 pb-64 sm:p-6 sm:pb-6"
+    class="page-shell flex min-h-screen flex-col items-center pt-[max(1rem,env(safe-area-inset-top))] pr-[max(1rem,env(safe-area-inset-right))] pb-[max(1rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] sm:pt-[max(1.5rem,env(safe-area-inset-top))] sm:pr-[max(1.5rem,env(safe-area-inset-right))] sm:pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:pl-[max(1.5rem,env(safe-area-inset-left))]"
+    :style="{ paddingBottom: mobilePaddingBottom }"
   >
-    <!-- Header -->
     <div
       class="relative mb-4 flex h-max w-full max-w-md animate-scaleIn items-center justify-center sm:mb-6 sm:max-w-xl md:max-w-3xl lg:max-w-6xl"
+      style="animation-duration: 0.5s"
     >
       <NuxtLink
         to="/"
-        aria-label="Kembali ke beranda"
+        :aria-label="t('generate.header.back')"
         class="clay-raised absolute left-0 flex h-11 w-11 items-center justify-center rounded-full bg-[var(--clay-surface-alt)] font-bold text-[var(--clay-text)] transition"
       >
         <ArrowLeftIcon class="h-5 w-5" aria-hidden="true" />
       </NuxtLink>
 
       <img
-        src="/randomix.png"
-        alt="Logo Randomix"
+        src="/randomix-white.png"
+        :alt="t('common.logoAlt')"
         width="497"
         height="123"
-        class="w-52 sm:w-64 md:w-80"
+        class="w-52 drop-shadow-sm sm:w-64 md:w-80"
       />
     </div>
 
-    <h1 class="sr-only">Generate Tim Olahraga Secara Acak</h1>
+    <h1 class="sr-only">{{ t("generate.header.title") }}</h1>
 
-    <!-- Step indicator -->
     <ol
-      class="mb-4 flex w-full max-w-md items-center justify-center gap-1.5 text-[11px] font-semibold text-[var(--clay-text-muted)] sm:max-w-xl sm:text-xs md:max-w-3xl lg:max-w-6xl"
+      class="mb-4 flex w-full max-w-md items-center justify-center gap-1.5 text-[11px] font-semibold text-[var(--page-text-muted)] sm:max-w-xl sm:text-xs md:max-w-3xl lg:max-w-6xl"
       aria-hidden="true"
     >
       <li
         class="rounded-full px-2 py-1 transition"
-        :class="stepActive(1) ? 'bg-[var(--clay-accent)]/20 text-[var(--clay-accent-dark)]' : ''"
+        :class="stepActive(1) ? 'bg-white/25 text-white' : ''"
       >
-        1. Pemain
+        {{ t("generate.header.step1") }}
       </li>
       <li class="opacity-50">→</li>
       <li
         class="rounded-full px-2 py-1 transition"
-        :class="stepActive(2) ? 'bg-[var(--clay-accent)]/20 text-[var(--clay-accent-dark)]' : ''"
+        :class="stepActive(2) ? 'bg-white/25 text-white' : ''"
       >
-        2. Jumlah Tim
+        {{ t("generate.header.step2") }}
       </li>
       <li class="opacity-50">→</li>
       <li
         class="rounded-full px-2 py-1 transition"
-        :class="stepActive(3) ? 'bg-[var(--clay-accent)]/20 text-[var(--clay-accent-dark)]' : ''"
+        :class="stepActive(3) ? 'bg-white/25 text-white' : ''"
       >
-        3. Hasil
+        {{ t("generate.header.step3") }}
       </li>
     </ol>
 
-    <!-- Grid 2 kolom di desktop: form (kiri) + hasil (kanan) bersebelahan,
-         supaya tidak perlu scroll jauh untuk lihat hasil sambil isi form. -->
     <div class="grid w-full max-w-md gap-6 sm:max-w-xl md:max-w-3xl lg:max-w-6xl lg:grid-cols-[380px_1fr] lg:items-start lg:gap-8">
-      <!-- Panel Form -->
       <section
         aria-labelledby="form-heading"
         class="clay-surface clay-raised w-full p-5 sm:p-6"
       >
-      <h2 id="form-heading" class="sr-only">Tambah Pemain</h2>
+      <h2 id="form-heading" class="sr-only">{{ t("generate.form.heading") }}</h2>
 
-      <!-- Toggle Level -->
       <div class="mb-4 flex items-center gap-3 text-[var(--clay-text)]">
-        <BaseToggle v-model="useLevel" label="Gunakan Level" />
+        <BaseToggle v-model="useLevel" :label="t('generate.form.useLevel')" />
         <span class="cursor-pointer text-sm font-medium sm:text-base" @click="useLevel = !useLevel">
-          Gunakan Level
+          {{ t("generate.form.useLevel") }}
         </span>
       </div>
 
-      <!-- Input Pemain -->
       <form class="flex flex-col gap-3" @submit.prevent="addPlayer">
         <div>
-          <label for="player-name" class="sr-only">Nama pemain</label>
+          <label for="player-name" class="sr-only">{{ t("generate.form.nameLabel") }}</label>
           <input
             id="player-name"
             v-model="playerName"
             type="text"
-            placeholder="Nama pemain"
+            :placeholder="t('generate.form.namePlaceholder')"
             maxlength="30"
             autocomplete="off"
             :aria-invalid="!!nameError"
@@ -98,21 +93,61 @@
         </div>
 
         <div v-if="useLevel">
-          <span class="sr-only">Level pemain</span>
-          <BaseSelect v-model="playerLevel" :options="levelOptions" label="Level pemain" />
+          <span class="mb-1.5 block text-xs font-semibold text-[var(--clay-text)]">{{ t("generate.form.levelLabel") }}</span>
+          <div class="grid grid-cols-3 gap-2" role="radiogroup" :aria-label="t('generate.form.levelLabel')">
+            <button
+              v-for="lvl in levelOptions"
+              :key="lvl.value"
+              type="button"
+              role="radio"
+              :aria-checked="playerLevel === lvl.value"
+              class="rounded-xl px-3 py-2 text-sm font-bold transition"
+              :class="
+                playerLevel === lvl.value
+                  ? 'clay-raised bg-[var(--clay-accent)] text-white'
+                  : 'clay-inset text-[var(--clay-text-muted)]'
+              "
+              @click="playerLevel = lvl.value"
+            >
+              {{ lvl.label }}
+            </button>
+          </div>
         </div>
 
         <BaseButton type="submit" :disabled="!canAddPlayer">
-          Tambah Pemain
+          {{ t("generate.form.submit") }}
         </BaseButton>
       </form>
 
-      <!-- Info jumlah pemain -->
-      <p v-if="players.length" class="mt-4 text-sm text-[var(--clay-text)]" aria-live="polite">
-        {{ players.length }} pemain{{ maxPlayersReached ? ` (maksimal ${MAX_PLAYERS})` : "" }}
-      </p>
+      <div v-if="players.length" class="mt-4 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-1.5 text-xs sm:text-sm">
+          <span class="rounded-full bg-black/5 px-2.5 py-1 font-semibold text-[var(--clay-text)]">
+            {{ t("generate.playerList.total", { count: players.length }) }}
+          </span>
+          <template v-if="useLevel">
+            <span class="rounded-full bg-emerald-100 px-2.5 py-1 font-semibold text-emerald-700">
+              {{ t("generate.playerList.levelCount", { level: t("generate.levels.newbie"), count: levelCounts.Newbie }) }}
+            </span>
+            <span class="rounded-full bg-sky-100 px-2.5 py-1 font-semibold text-sky-700">
+              {{ t("generate.playerList.levelCount", { level: t("generate.levels.middle"), count: levelCounts.Middle }) }}
+            </span>
+            <span class="rounded-full bg-amber-100 px-2.5 py-1 font-semibold text-amber-700">
+              {{ t("generate.playerList.levelCount", { level: t("generate.levels.pro"), count: levelCounts.Pro }) }}
+            </span>
+          </template>
+          <span v-if="maxPlayersReached" class="rounded-full bg-rose-100 px-2.5 py-1 font-semibold text-rose-700">
+            {{ t("generate.playerList.max", { max: MAX_PLAYERS }) }}
+          </span>
+        </div>
+        <button
+          type="button"
+          class="text-xs font-semibold text-rose-500 underline-offset-2 transition hover:underline sm:text-sm"
+          @click="handleClearAllPlayers"
+        >
+          {{ t("generate.playerList.clearAll") }}
+        </button>
+      </div>
 
-      <!-- List Pemain -->
       <ul
         class="max-h-52 overflow-y-auto pr-1"
         :class="{ 'border-t border-slate-200 pt-3': players.length > 0 }"
@@ -135,12 +170,12 @@
                 v-if="isPending(p)"
                 class="rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-950"
               >
-                Belum masuk tim
+                {{ t("generate.playerList.pendingBadge") }}
               </span>
             </span>
             <button
               type="button"
-              :aria-label="`Hapus pemain ${p.name}`"
+              :aria-label="t('generate.playerList.removeAria', { name: p.name })"
               class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-rose-400 transition hover:bg-black/5 hover:text-rose-500"
               @click="removePlayer(idx)"
             >
@@ -148,10 +183,9 @@
             </button>
           </li>
         </template>
-        <EmptyState v-else message="Belum ada pemain" :icon="InboxIcon" />
+        <EmptyState v-else :message="t('generate.playerList.empty')" :icon="InboxIcon" />
       </ul>
 
-      <!-- Panel: pemain baru yang belum ditempatkan ke tim manapun -->
       <div
         v-if="pendingPlayers.length"
         ref="pendingPanelRef"
@@ -160,14 +194,14 @@
       >
         <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h3 class="text-sm font-bold text-amber-900 sm:text-base">
-            🆕 Perlu Ditempatkan ({{ pendingPlayers.length }})
+            {{ t("generate.pending.heading", { count: pendingPlayers.length }) }}
           </h3>
           <BaseButton variant="accent" size="sm" @click="autoAssignAllPending">
-            ⚡ Otomatis Semua
+            {{ t("generate.pending.autoAll") }}
           </BaseButton>
         </div>
         <p class="mb-3 text-xs text-amber-800/80">
-          Pemain ini ditambahkan setelah tim dibuat. Tim yang sudah ada tidak berubah kecuali kamu pilih di sini.
+          {{ t("generate.pending.helper") }}
         </p>
         <ul class="space-y-2">
           <li
@@ -187,7 +221,7 @@
             <TeamAssignSelect
               class="sm:w-56"
               :teams="teamOptions"
-              :label="`Tempatkan ${p.name} ke tim`"
+              :label="t('generate.pending.assignLabel', { name: p.name })"
               @assign="(value) => handlePendingAssign(p, value)"
             />
           </li>
@@ -197,18 +231,15 @@
           class="mt-3 w-full rounded-lg px-3 py-2 text-xs font-semibold text-[var(--clay-text)] transition hover:bg-black/5 sm:text-sm"
           @click="handleCreateCup"
         >
-          Lanjutkan Tanpa Mereka →
+          {{ t("generate.pending.continueWithout") }}
         </button>
       </div>
 
-      <!-- Jumlah Tim + Aksi Generate — versi desktop, statis di dalam card.
-           Versi mobile di-teleport ke <body> sebagai fixed footer (lihat di bawah)
-           supaya tidak ikut ter-scroll bersama form yang panjang di layar kecil. -->
       <div class="mt-4 hidden sm:block">
         <div>
           <div class="flex items-center gap-3">
             <label for="team-count-desktop" class="whitespace-nowrap text-sm font-semibold text-[var(--clay-text)] sm:text-base">
-              Jumlah Tim:
+              {{ t("generate.teamCount.label") }}
             </label>
             <input
               id="team-count-desktop"
@@ -237,11 +268,11 @@
             <ArrowPathRoundedSquareIcon v-if="teams.length" class="h-5 w-5" aria-hidden="true" />
             <BoltIcon v-else class="h-5 w-5" aria-hidden="true" />
           </template>
-          {{ teams.length ? "Generate Ulang" : "Generate Tim" }}
+          {{ teams.length ? t("generate.teamCount.regenerate") : t("generate.teamCount.generate") }}
         </BaseButton>
 
         <div v-if="teams.length" class="mt-3">
-          <p class="mb-1.5 text-xs font-semibold text-[var(--clay-text)] sm:text-sm">Jenis Turnamen</p>
+          <p class="mb-1.5 text-xs font-semibold text-[var(--clay-text)] sm:text-sm">{{ t("generate.teamCount.tournamentType") }}</p>
           <CupTypeSelector v-model="tournamentType" />
         </div>
 
@@ -249,41 +280,36 @@
           <template #icon>
             <TrophyIcon class="h-5 w-5" aria-hidden="true" />
           </template>
-          Buat Cup Turnamen
+          {{ t("generate.teamCount.createCup") }}
         </BaseButton>
       </div>
       </section>
 
-      <!-- Kolom kanan: aksi export + hasil tim (desktop kesamping dgn form, lihat komentar grid di atas) -->
       <div class="flex min-w-0 flex-col gap-4">
-        <EmptyState
-          v-if="!teams.length"
-          message="Hasil tim akan muncul di sini setelah kamu generate."
-          :icon="TrophyIcon"
-        />
+        <div v-if="!teams.length" class="clay-surface clay-raised">
+          <EmptyState :message="t('generate.results.empty')" :icon="TrophyIcon" />
+        </div>
 
         <template v-else>
-          <!-- Aksi Result -->
           <div class="flex w-full flex-wrap items-center justify-center gap-3 lg:justify-start">
             <BaseButton variant="secondary" size="sm" :loading="isGeneratingPDF" @click="downloadPDF">
               <template #icon><DocumentIcon class="h-4 w-4" aria-hidden="true" /></template>
-              Download PDF
+              {{ t("common.export.downloadPdf") }}
             </BaseButton>
             <BaseButton variant="secondary" size="sm" :loading="isGeneratingImage" @click="downloadImage">
               <template #icon><PhotoIcon class="h-4 w-4" aria-hidden="true" /></template>
-              Download Gambar
+              {{ t("common.export.downloadImage") }}
             </BaseButton>
             <BaseButton variant="secondary" size="sm" @click="copyText">
               <template #icon><DocumentDuplicateIcon class="h-4 w-4" aria-hidden="true" /></template>
-              Salin Teks
+              {{ t("common.export.copyText") }}
             </BaseButton>
             <BaseButton variant="secondary" size="sm" @click="shareWhatsApp">
               <template #icon><ChatBubbleOvalLeftIcon class="h-4 w-4" aria-hidden="true" /></template>
-              Share WhatsApp
+              {{ t("common.export.shareWhatsapp") }}
             </BaseButton>
           </div>
 
-          <!-- Hasil Tim -->
           <div
             id="hasil-tim"
             class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3"
@@ -291,19 +317,23 @@
       <div
         v-for="(team, idx) in teams"
         :key="idx"
-        class="clay-raised animate-fadeIn rounded-2xl p-4 text-white"
-        :style="{ backgroundColor: teamColors[idx % teamColors.length] }"
+        class="clay-raised animate-scaleIn rounded-2xl p-4 text-white"
+        :style="{
+          backgroundColor: teamColors[idx % teamColors.length],
+          transform: `rotate(${idx % 2 === 0 ? -1 : 1}deg)`,
+          animationDelay: `${idx * 0.08}s`,
+        }"
       >
         <div class="mb-2 flex items-center justify-between gap-2">
           <h3 class="text-sm font-bold sm:text-base">
-            Tim {{ idx + 1 }} <span class="font-normal opacity-80">({{ team.length }})</span>
+            {{ t("generate.results.teamHeading", { number: idx + 1, count: team.length }) }}
           </h3>
           <button
             type="button"
             class="rounded-full bg-black/10 px-2 py-1 text-[10px] font-semibold text-white/90 transition hover:bg-black/20 sm:text-xs"
             @click="disbandTeam(idx)"
           >
-            Bubarkan
+            {{ t("generate.results.disband") }}
           </button>
         </div>
         <ul class="space-y-2 text-xs sm:text-sm">
@@ -314,7 +344,7 @@
               </span>
               <button
                 type="button"
-                :aria-label="`Pindahkan ${p.name} ke tim lain`"
+                :aria-label="t('generate.results.moveMemberAria', { name: p.name })"
                 class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/80 transition hover:bg-white/20 hover:text-white"
                 @click="toggleMoveMember(p.id)"
               >
@@ -326,7 +356,7 @@
               class="mt-1.5"
               :teams="teamOptions"
               :show-auto="teams.length > 1"
-              :label="`Pindahkan ${p.name} ke tim`"
+              :label="t('generate.results.moveMemberLabel', { name: p.name })"
               @assign="
                 (value) => {
                   moveMember(idx, p, value);
@@ -342,18 +372,17 @@
       </div>
     </div>
 
-    <!-- Jumlah Tim + Aksi Generate — versi mobile: di-teleport ke <body> supaya `position: fixed`
-         benar-benar relatif ke viewport, bebas dari ancestor manapun. -->
     <Teleport to="body">
       <div
-        class="clay-surface clay-raised fixed inset-x-0 bottom-0 z-30 rounded-b-none px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2.5 sm:hidden"
+        ref="mobileFooterRef"
+        class="clay-surface clay-raised fixed inset-x-0 bottom-0 z-30 rounded-b-none pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2.5 sm:hidden"
       >
         <div class="mx-auto mb-2 h-1 w-10 rounded-full bg-black/10" aria-hidden="true" />
         <div class="mx-auto flex w-full max-w-md flex-col gap-3">
           <div>
             <div class="flex items-center gap-3">
               <label for="team-count-mobile" class="whitespace-nowrap text-sm font-semibold text-[var(--clay-text)]">
-                Jumlah Tim:
+                {{ t("generate.teamCount.label") }}
               </label>
               <input
                 id="team-count-mobile"
@@ -382,11 +411,11 @@
               <ArrowPathRoundedSquareIcon v-if="teams.length" class="h-5 w-5" aria-hidden="true" />
               <BoltIcon v-else class="h-5 w-5" aria-hidden="true" />
             </template>
-            {{ teams.length ? "Generate Ulang" : "Generate Tim" }}
+            {{ teams.length ? t("generate.teamCount.regenerate") : t("generate.teamCount.generate") }}
           </BaseButton>
 
           <div v-if="teams.length">
-            <p class="mb-1.5 text-xs font-semibold text-[var(--clay-text)]">Jenis Turnamen</p>
+            <p class="mb-1.5 text-xs font-semibold text-[var(--clay-text)]">{{ t("generate.teamCount.tournamentType") }}</p>
             <CupTypeSelector v-model="tournamentType" />
           </div>
 
@@ -394,13 +423,12 @@
             <template #icon>
               <TrophyIcon class="h-5 w-5" aria-hidden="true" />
             </template>
-            Buat Cup Turnamen
+            {{ t("generate.teamCount.createCup") }}
           </BaseButton>
         </div>
       </div>
     </Teleport>
 
-    <!-- Export container - result download image - hidden -->
     <div class="pointer-events-none absolute opacity-0" aria-hidden="true">
       <div
         id="export-capture"
@@ -415,7 +443,7 @@
               class="rounded-xl p-4 text-white"
               :style="{ backgroundColor: teamColors[idx % teamColors.length] }"
             >
-              <h2 class="mb-2 text-lg font-bold sm:text-xl">Tim {{ idx + 1 }}</h2>
+              <h2 class="mb-2 text-lg font-bold sm:text-xl">{{ t("generate.exportCapture.teamHeading", { number: idx + 1 }) }}</h2>
               <ul class="space-y-1 text-sm sm:text-base">
                 <li v-for="p in team" :key="p.id">
                   {{ p.name }}
@@ -426,7 +454,7 @@
           </div>
         </div>
         <p class="pt-6 text-center text-xs italic text-gray-500">
-          Generate by <span class="randomix">randomix</span>
+          {{ t("common.export.generateBy") }}
         </p>
       </div>
     </div>
@@ -443,7 +471,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import {
   XMarkIcon,
   ArrowLeftIcon,
@@ -463,24 +491,24 @@ import { useRouter } from "vue-router";
 import { useToast } from "../composables/useToast";
 import { shuffleArray } from "../utils/shuffle";
 
+const { t } = useI18n();
+
 const config = useRuntimeConfig();
 const ogImageUrl = new URL("/randomix.png", config.public.siteUrl).toString();
 
 useSeoMeta({
-  title: "Generate Tim",
-  description:
-    "Tambahkan nama pemain lalu generate tim olahraga secara acak dan adil, dengan atau tanpa mempertimbangkan level skill.",
-  ogTitle: "Generate Tim — Randomix",
-  ogDescription:
-    "Tambahkan nama pemain lalu generate tim olahraga secara acak dan adil dalam hitungan detik.",
+  title: () => t("generate.seo.title"),
+  description: () => t("generate.seo.description"),
+  ogTitle: () => t("generate.seo.ogTitle"),
+  ogDescription: () => t("generate.seo.ogDescription"),
   ogUrl: `${config.public.siteUrl}/generate`,
   ogImage: ogImageUrl,
   ogImageWidth: 498,
   ogImageHeight: 129,
-  ogImageAlt: "Logo Randomix",
+  ogImageAlt: () => t("common.logoAlt"),
   twitterCard: "summary_large_image",
   twitterImage: ogImageUrl,
-  twitterImageAlt: "Logo Randomix",
+  twitterImageAlt: () => t("common.logoAlt"),
   robots: "index, follow",
 });
 useHead({
@@ -493,11 +521,11 @@ const MAX_PLAYERS = 64;
 const MAX_NAME_LENGTH = 30;
 const SCORE_MAP = { Pro: 3, Middle: 2, Newbie: 1 };
 
-const levelOptions = [
-  { value: "Newbie", label: "Newbie" },
-  { value: "Middle", label: "Middle" },
-  { value: "Pro", label: "Pro" },
-];
+const levelOptions = computed(() => [
+  { value: "Newbie", label: t("generate.levels.newbie") },
+  { value: "Middle", label: t("generate.levels.middle") },
+  { value: "Pro", label: t("generate.levels.pro") },
+]);
 
 const playerName = ref("");
 const playerLevel = ref("Newbie");
@@ -508,13 +536,38 @@ const teams = ref([]);
 const tournamentType = ref("elimination");
 const teamColors = ["#34d399", "#38bdf8", "#fbbf24", "#fb923c", "#a78bfa"];
 
-// true setelah generate pertama kali sukses — tetap true walau semua tim dibubarkan,
-// supaya konsep "pemain pending" tidak hilang begitu saja.
 const hasGenerated = ref(false);
 const pendingPanelRef = ref(null);
 const pendingHighlight = ref(false);
 const movingMemberId = ref(null);
 const confirmDialog = ref(null);
+
+const mobileFooterRef = ref(null);
+const mobileFooterHeight = ref(0);
+const isMobileViewport = ref(false);
+const mobilePaddingBottom = computed(() =>
+  isMobileViewport.value ? `${mobileFooterHeight.value + 24}px` : undefined
+);
+
+let footerResizeObserver = null;
+function checkMobileViewport() {
+  isMobileViewport.value = window.innerWidth < 640;
+}
+
+onMounted(() => {
+  checkMobileViewport();
+  window.addEventListener("resize", checkMobileViewport);
+  if (mobileFooterRef.value) {
+    footerResizeObserver = new ResizeObserver(() => {
+      mobileFooterHeight.value = mobileFooterRef.value?.getBoundingClientRect().height ?? 0;
+    });
+    footerResizeObserver.observe(mobileFooterRef.value);
+  }
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", checkMobileViewport);
+  footerResizeObserver?.disconnect();
+});
 
 function handleConfirmDialogConfirm() {
   confirmDialog.value?.onConfirm();
@@ -537,15 +590,23 @@ const canAddPlayer = computed(() => {
   return trimmed.length > 0 && !maxPlayersReached.value;
 });
 
-// id pemain yang sudah tergabung di salah satu tim hasil generate.
 const assignedPlayerIds = computed(() => new Set(teams.value.flatMap((t) => t.map((m) => m.id))));
 
-// pemain yang ditambahkan setelah generate tapi belum masuk tim manapun.
 const pendingPlayers = computed(() =>
   hasGenerated.value ? players.value.filter((p) => !assignedPlayerIds.value.has(p.id)) : []
 );
 
-const teamOptions = computed(() => teams.value.map((t, i) => ({ name: `Tim ${i + 1}`, count: t.length })));
+const teamOptions = computed(() =>
+  teams.value.map((tm, i) => ({ name: t("generate.exportCapture.teamHeading", { number: i + 1 }), count: tm.length }))
+);
+
+const levelCounts = computed(() => {
+  const counts = { Newbie: 0, Middle: 0, Pro: 0 };
+  players.value.forEach((p) => {
+    if (p.level && counts[p.level] !== undefined) counts[p.level]++;
+  });
+  return counts;
+});
 
 function isPending(player) {
   return hasGenerated.value && !assignedPlayerIds.value.has(player.id);
@@ -557,7 +618,6 @@ function stepActive(step) {
   return hasGenerated.value;
 }
 
-// Validasi nama secara reaktif: kosong, duplikat, atau melebihi batas pemain.
 watch(playerName, (value) => {
   const trimmed = value.trim();
   if (!trimmed) {
@@ -565,35 +625,33 @@ watch(playerName, (value) => {
     return;
   }
   if (maxPlayersReached.value) {
-    nameError.value = `Maksimal ${MAX_PLAYERS} pemain tercapai.`;
+    nameError.value = t("generate.validation.maxReached", { max: MAX_PLAYERS });
   } else if (isDuplicateName(trimmed)) {
-    nameError.value = "Nama pemain sudah ada.";
+    nameError.value = t("generate.validation.duplicateName");
   } else {
     nameError.value = "";
   }
 });
 
-// Validasi jumlah tim secara reaktif (live saat mengetik), independen dari clamp on-blur.
 watch(teamCount, (value) => {
   if (value === null || value === undefined || Number.isNaN(value)) {
-    teamCountError.value = "Jumlah tim harus berupa angka.";
+    teamCountError.value = t("generate.validation.teamCountNaN");
     return;
   }
   if (!Number.isInteger(value)) {
-    teamCountError.value = "Jumlah tim harus bilangan bulat.";
+    teamCountError.value = t("generate.validation.teamCountNotInteger");
     return;
   }
   const max = Math.max(players.value.length, 2);
   if (value > max) {
-    teamCountError.value = `Jumlah tim tidak boleh melebihi jumlah pemain (${max}).`;
+    teamCountError.value = t("generate.validation.teamCountExceeds", { max });
   } else if (value < 2) {
-    teamCountError.value = "Minimal 2 tim.";
+    teamCountError.value = t("generate.validation.teamCountMin");
   } else {
     teamCountError.value = "";
   }
 });
 
-// Jika daftar pemain menyusut di bawah jumlah tim saat ini, sesuaikan otomatis.
 watch(
   () => players.value.length,
   (count) => {
@@ -608,12 +666,36 @@ onMounted(async () => {
     const module = await import("jspdf");
     jsPDFModule = module.default;
   } catch (err) {
-    console.error("Gagal memuat modul PDF:", err);
+    console.error("Failed to load PDF module:", err);
   }
 });
 
 const cupStore = useCupStore();
 const router = useRouter();
+
+// Rehydrate dari cup store: state lokal komponen ini reset saat unmount/remount,
+// jadi tanpa ini data hilang kalau user balik dari halaman turnamen.
+onMounted(() => {
+  if (cupStore.players.length === 0 && cupStore.teams.length === 0) return;
+
+  const nameToId = new Map();
+  players.value = cupStore.players.map((p) => {
+    const id = ++playerIdSeq;
+    nameToId.set(p.name, id);
+    return { id, name: p.name, level: p.level ?? null };
+  });
+  teams.value = cupStore.teams.map((t) =>
+    t.members.map((m) => ({
+      id: nameToId.get(m.name) ?? ++playerIdSeq,
+      name: m.name,
+      level: m.level ?? null,
+    }))
+  );
+  useLevel.value = cupStore.useLevel;
+  teamCount.value = cupStore.teamCount || teams.value.length || 2;
+  tournamentType.value = cupStore.tournamentType;
+  hasGenerated.value = teams.value.length > 0;
+});
 
 function isDuplicateName(name) {
   const normalized = name.toLowerCase();
@@ -625,11 +707,11 @@ function addPlayer() {
   if (!trimmed) return;
 
   if (maxPlayersReached.value) {
-    toast.error(`Maksimal ${MAX_PLAYERS} pemain.`);
+    toast.error(t("generate.toast.maxPlayers", { max: MAX_PLAYERS }));
     return;
   }
   if (isDuplicateName(trimmed)) {
-    nameError.value = "Nama pemain sudah ada.";
+    nameError.value = t("generate.validation.duplicateName");
     return;
   }
 
@@ -643,7 +725,7 @@ function addPlayer() {
   if (useLevel.value) playerLevel.value = "Newbie";
 
   if (hasGenerated.value) {
-    toast.info(`${trimmed} ditambahkan. Pilih tim untuk pemain ini di bawah.`);
+    toast.info(t("generate.toast.playerAddedPending", { name: trimmed }));
   }
 }
 
@@ -651,15 +733,28 @@ function removePlayer(idx) {
   const player = players.value[idx];
   players.value.splice(idx, 1);
 
-  // sinkronkan: kalau pemain ini sudah masuk tim, keluarkan juga dari sana.
   for (const team of teams.value) {
     const i = team.findIndex((m) => m.id === player.id);
     if (i !== -1) {
       team.splice(i, 1);
-      toast.info(`${player.name} dihapus dari tim.`);
+      toast.info(t("generate.toast.playerRemoved", { name: player.name }));
       break;
     }
   }
+}
+
+function handleClearAllPlayers() {
+  confirmDialog.value = {
+    title: t("generate.toast.clearAllTitle"),
+    message: t("generate.toast.clearAllMessage", { count: players.value.length }),
+    variant: "danger",
+    onConfirm: () => {
+      players.value = [];
+      teams.value = [];
+      hasGenerated.value = false;
+      toast.info(t("generate.toast.clearedAll"));
+    },
+  };
 }
 
 function clampTeamCount() {
@@ -690,12 +785,12 @@ function leastLoadedTeamIndex() {
 
 function generateTeams() {
   if (players.value.length < 2) {
-    toast.error("Tambahkan minimal 2 pemain untuk generate tim.");
+    toast.error(t("generate.toast.needTwoPlayers"));
     return;
   }
   clampTeamCount();
   if (teamCount.value < 2) {
-    toast.error("Jumlah tim minimal 2.");
+    toast.error(t("generate.toast.needTwoTeams"));
     return;
   }
 
@@ -717,7 +812,6 @@ function generateTeams() {
       totalScore: 0,
     }));
 
-    // greedy assign: selalu masukkan ke tim dengan skor total terkecil
     for (const p of shuffledPool) {
       teamStats.sort((a, b) => {
         if (a.totalScore !== b.totalScore) return a.totalScore - b.totalScore;
@@ -727,7 +821,6 @@ function generateTeams() {
       teamStats[0].totalScore += p.score;
     }
 
-    // ratakan jumlah anggota antar tim (selisih maksimal 1)
     let stabilized = false;
     while (!stabilized) {
       const sizes = teamStats.map((t) => t.members.length);
@@ -760,18 +853,18 @@ function generateTeams() {
   }
 
   hasGenerated.value = true;
-  toast.success("Tim berhasil dibuat!");
+  toast.success(t("generate.toast.teamsGenerated"));
 }
 
 function assignPlayerToTeam(player, teamIdx) {
   teams.value[teamIdx].push({ id: player.id, name: player.name, level: player.level || null });
-  toast.success(`${player.name} masuk ke Tim ${teamIdx + 1}.`);
+  toast.success(t("generate.toast.playerAssigned", { name: player.name, teamNumber: teamIdx + 1 }));
 }
 
 function assignPlayerToNewTeam(player) {
   teams.value.push([{ id: player.id, name: player.name, level: player.level || null }]);
   teamCount.value = teams.value.length;
-  toast.success(`${player.name} membentuk Tim ${teams.value.length} baru.`);
+  toast.success(t("generate.toast.playerNewTeam", { name: player.name, teamNumber: teams.value.length }));
 }
 
 function autoAssignPlayer(player) {
@@ -791,7 +884,7 @@ function handlePendingAssign(player, value) {
 function autoAssignAllPending() {
   const targets = [...pendingPlayers.value];
   targets.forEach((p) => autoAssignPlayer(p));
-  toast.success("Semua pemain baru berhasil ditempatkan.");
+  toast.success(t("generate.toast.allPendingAssigned"));
 }
 
 function toggleMoveMember(memberId) {
@@ -807,28 +900,28 @@ function moveMember(fromTeamIdx, member, value) {
   if (value === "new") {
     teams.value.push([member]);
     teamCount.value = teams.value.length;
-    toast.success(`${member.name} pindah ke Tim ${teams.value.length} (baru).`);
+    toast.success(t("generate.toast.memberMovedNew", { name: member.name, teamNumber: teams.value.length }));
   } else if (value === "auto") {
     const targetIdx = leastLoadedTeamIndex();
     teams.value[targetIdx].push(member);
-    toast.success(`${member.name} dipindah otomatis ke Tim ${targetIdx + 1}.`);
+    toast.success(t("generate.toast.memberMovedAuto", { name: member.name, teamNumber: targetIdx + 1 }));
   } else {
     teams.value[value].push(member);
-    toast.success(`${member.name} pindah ke Tim ${value + 1}.`);
+    toast.success(t("generate.toast.memberMoved", { name: member.name, teamNumber: value + 1 }));
   }
 }
 
 function performDisbandTeam(idx) {
   teams.value.splice(idx, 1);
-  toast.info(`Tim ${idx + 1} dibubarkan.`);
+  toast.info(t("generate.toast.teamDisbanded", { teamNumber: idx + 1 }));
 }
 
 function disbandTeam(idx) {
   const team = teams.value[idx];
   if (team.length > 0) {
     confirmDialog.value = {
-      title: "Bubarkan tim ini?",
-      message: `Bubarkan Tim ${idx + 1}? ${team.length} pemain akan kembali ke daftar belum masuk tim.`,
+      title: t("generate.toast.disbandTitle"),
+      message: t("generate.toast.disbandMessage", { teamNumber: idx + 1, count: team.length }),
       variant: "danger",
       onConfirm: () => performDisbandTeam(idx),
     };
@@ -839,13 +932,11 @@ function disbandTeam(idx) {
 
 function handleCreateCupClick() {
   if (teams.value.length < 2) {
-    toast.error("Generate minimal 2 tim terlebih dahulu.");
+    toast.error(t("generate.toast.needTeamsForCup"));
     return;
   }
   if (pendingPlayers.value.length > 0) {
-    toast.info(
-      `${pendingPlayers.value.length} pemain belum masuk tim. Atur di bawah, atau lanjutkan tanpa mereka.`
-    );
+    toast.info(t("generate.toast.pendingBeforeCup", { count: pendingPlayers.value.length }));
     pendingHighlight.value = true;
     pendingPanelRef.value?.scrollIntoView({ behavior: "smooth", block: "center" });
     setTimeout(() => {
@@ -858,7 +949,7 @@ function handleCreateCupClick() {
 
 function handleCreateCup() {
   if (teams.value.length < 2) {
-    toast.error("Generate minimal 2 tim terlebih dahulu.");
+    toast.error(t("generate.toast.needTeamsForCup"));
     return;
   }
 
@@ -868,23 +959,25 @@ function handleCreateCup() {
     useLevel: useLevel.value,
     teamCount: teamCount.value,
     tournamentType: tournamentType.value,
+    teamNamePrefix: t("cup.standingsTable.team"),
+    groupNamePrefix: t("cup.groupStage.groupNamePrefix"),
   });
 
   router.push("/create-cup");
 }
 
 function getTeamsText(forWhatsApp = false) {
-  let text = forWhatsApp ? "*Hasil Generate Tim:*\n\n" : "Hasil Generate Tim:\n\n";
+  let text = (forWhatsApp ? t("generate.shareText.headerWa") : t("generate.shareText.header")) + "\n\n";
 
   teams.value.forEach((team, idx) => {
-    text += forWhatsApp ? `*Tim ${idx + 1}:*\n` : `Tim ${idx + 1}:\n`;
+    text += (forWhatsApp ? t("generate.shareText.teamLineWa", { number: idx + 1 }) : t("generate.shareText.teamLine", { number: idx + 1 })) + "\n";
     team.forEach((p) => {
       text += `- ${p.name}${useLevel.value && p.level ? " (" + p.level + ")" : ""}\n`;
     });
     text += "\n";
   });
 
-  text += forWhatsApp ? "_Generate by *randomix*_" : "Generate by randomix";
+  text += forWhatsApp ? t("common.export.generateByWa") : t("common.export.generateBy");
   return text;
 }
 
@@ -894,12 +987,12 @@ async function copyText() {
     if (navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(text);
     } else {
-      throw new Error("Clipboard API tidak tersedia");
+      throw new Error(t("common.export.clipboardUnavailable"));
     }
-    toast.success("Hasil tim berhasil disalin!");
+    toast.success(t("generate.toast.textCopied"));
   } catch (err) {
-    console.error("Gagal menyalin teks:", err);
-    toast.error("Gagal menyalin teks. Coba salin manual.");
+    console.error("Failed to copy text:", err);
+    toast.error(t("common.export.copyError"));
   }
 }
 
@@ -908,7 +1001,7 @@ function shareWhatsApp() {
   const url = `https://wa.me/?text=${text}`;
   const win = window.open(url, "_blank", "noopener,noreferrer");
   if (!win) {
-    toast.error("Popup diblokir browser. Aktifkan izin popup untuk membagikan ke WhatsApp.");
+    toast.error(t("common.export.whatsappPopupBlocked"));
   }
 }
 
@@ -927,8 +1020,8 @@ async function downloadImage() {
     link.href = canvas.toDataURL("image/png");
     link.click();
   } catch (err) {
-    console.error("Gagal membuat gambar:", err);
-    toast.error("Gagal membuat gambar. Silakan coba lagi.");
+    console.error("Failed to create image:", err);
+    toast.error(t("common.export.imageError"));
   } finally {
     isGeneratingImage.value = false;
   }
@@ -945,42 +1038,57 @@ async function downloadPDF() {
     const pdf = new jsPDFModule("p", "mm", "a4");
 
     pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(18);
-    pdf.text("Hasil Generate Tim", 105, 20, { align: "center" });
+    pdf.setFontSize(16);
+    pdf.text(t("generate.shareText.header").replace(/:$/, ""), 105, 16, { align: "center" });
 
-    let y = 35;
+    const marginTop = 26;
+    const marginBottom = 283;
+    const colX = [15, 110];
+    const colWidth = 85;
+    const colY = [marginTop, marginTop];
 
     teams.value.forEach((team, idx) => {
+      const blockHeight = 6 + team.length * 5 + 4;
+      let col = colY[0] <= colY[1] ? 0 : 1;
+
+      if (colY[col] + blockHeight > marginBottom) {
+        col = 1 - col;
+        if (colY[col] + blockHeight > marginBottom) {
+          pdf.addPage();
+          colY[0] = marginTop;
+          colY[1] = marginTop;
+          col = 0;
+        }
+      }
+
+      const x = colX[col];
+      let y = colY[col];
+
       pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(14);
-      pdf.text(`Tim ${idx + 1}`, 15, y);
-      y += 8;
+      pdf.setFontSize(11.5);
+      pdf.text(t("generate.exportCapture.teamHeading", { number: idx + 1 }), x, y);
+      y += 6;
 
       pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(12);
+      pdf.setFontSize(9.5);
       team.forEach((p) => {
         const textLine = `- ${p.name}${useLevel.value && p.level ? " (" + p.level + ")" : ""}`;
-        pdf.text(textLine, 20, y);
-        y += 7;
-
-        if (y > 270) {
-          pdf.addPage();
-          y = 20;
-        }
+        pdf.text(textLine, x + 2, y, { maxWidth: colWidth - 2 });
+        y += 5;
       });
 
-      y += 5;
+      colY[col] = y + 4;
     });
 
-    pdf.setFontSize(10);
+    pdf.setFontSize(9);
     pdf.setTextColor(150);
     pdf.setFont("helvetica", "italic");
-    pdf.text("Generate by randomix", 105, 290, { align: "center" });
+    pdf.text(t("common.export.generateBy"), 105, 292, { align: "center" });
 
     pdf.save("randomix_hasil-generate-tim.pdf");
   } catch (err) {
-    console.error("Gagal membuat PDF:", err);
-    toast.error("Gagal membuat PDF. Silakan coba lagi.");
+    console.error("Failed to create PDF:", err);
+    toast.error(t("common.export.pdfError"));
   } finally {
     isGeneratingPDF.value = false;
   }

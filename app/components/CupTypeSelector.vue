@@ -1,5 +1,5 @@
 <template>
-  <div role="radiogroup" aria-label="Jenis turnamen" class="grid grid-cols-3 gap-2 sm:gap-3">
+  <div role="radiogroup" :aria-label="t('cup.typeSelector.ariaLabel')" class="grid grid-cols-3 gap-2 sm:gap-3">
     <button
       v-for="opt in options"
       :key="opt.value"
@@ -69,6 +69,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 withDefaults(
   defineProps<{
     modelValue: string;
@@ -77,10 +79,11 @@ withDefaults(
 );
 
 const emit = defineEmits<{ "update:modelValue": [value: string] }>();
+const { t } = useI18n();
 
-const options = [
-  { value: "elimination", label: "Gugur", description: "Sistem gugur" },
-  { value: "roundrobin", label: "Round Robin", description: "Semua lawan semua" },
-  { value: "group", label: "Grup Stage", description: "Fase grup + knockout" },
-];
+const options = computed(() => [
+  { value: "elimination", label: t("cup.typeSelector.elimination.label"), description: t("cup.typeSelector.elimination.description") },
+  { value: "roundrobin", label: t("cup.typeSelector.roundrobin.label"), description: t("cup.typeSelector.roundrobin.description") },
+  { value: "group", label: t("cup.typeSelector.group.label"), description: t("cup.typeSelector.group.description") },
+]);
 </script>

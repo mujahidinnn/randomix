@@ -3,7 +3,7 @@
     <Transition name="confirm-dialog">
       <div
         v-if="open"
-        class="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm"
+        class="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/60 pt-[max(1rem,env(safe-area-inset-top))] pr-[max(1rem,env(safe-area-inset-right))] pb-[max(1rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] backdrop-blur-sm"
         @click.self="handleCancel"
         @keydown.esc="handleCancel"
       >
@@ -20,7 +20,7 @@
 
           <div class="mt-5 flex justify-end gap-3">
             <BaseButton variant="secondary" size="sm" @click="handleCancel">
-              {{ cancelLabel }}
+              {{ cancelLabel ?? t("common.confirmDialog.cancel") }}
             </BaseButton>
             <BaseButton
               ref="confirmButtonRef"
@@ -28,7 +28,7 @@
               :class="variant === 'danger' ? dangerButtonClass : ''"
               @click="handleConfirm"
             >
-              {{ confirmLabel }}
+              {{ confirmLabel ?? t("common.confirmDialog.confirm") }}
             </BaseButton>
           </div>
         </div>
@@ -50,12 +50,11 @@ withDefaults(
     variant?: "default" | "danger";
   }>(),
   {
-    confirmLabel: "Ya, lanjutkan",
-    cancelLabel: "Batal",
     variant: "default",
   }
 );
 
+const { t } = useI18n();
 const emit = defineEmits<{ confirm: []; cancel: [] }>();
 
 const titleId = useId();

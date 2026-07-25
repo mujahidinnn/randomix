@@ -3,16 +3,16 @@
     <table class="w-full min-w-[480px] border-collapse text-xs sm:text-sm">
       <thead>
         <tr class="text-left text-[var(--clay-text-muted)]">
-          <th class="px-2 py-2 font-semibold">#</th>
-          <th class="px-2 py-2 font-semibold">Tim</th>
-          <th class="px-2 py-2 text-center font-semibold">Main</th>
-          <th class="px-2 py-2 text-center font-semibold">M</th>
-          <th class="px-2 py-2 text-center font-semibold">S</th>
-          <th class="px-2 py-2 text-center font-semibold">K</th>
-          <th class="px-2 py-2 text-center font-semibold">GM</th>
-          <th class="px-2 py-2 text-center font-semibold">GK</th>
-          <th class="px-2 py-2 text-center font-semibold">SG</th>
-          <th class="px-2 py-2 text-center font-semibold">Poin</th>
+          <th class="px-2 py-2 font-semibold">{{ t("cup.standingsTable.rank") }}</th>
+          <th class="px-2 py-2 font-semibold">{{ t("cup.standingsTable.team") }}</th>
+          <th class="px-2 py-2 text-center font-semibold">{{ t("cup.standingsTable.played") }}</th>
+          <th class="px-2 py-2 text-center font-semibold">{{ t("cup.standingsTable.won") }}</th>
+          <th class="px-2 py-2 text-center font-semibold">{{ t("cup.standingsTable.drawn") }}</th>
+          <th class="px-2 py-2 text-center font-semibold">{{ t("cup.standingsTable.lost") }}</th>
+          <th class="px-2 py-2 text-center font-semibold">{{ t("cup.standingsTable.gf") }}</th>
+          <th class="px-2 py-2 text-center font-semibold">{{ t("cup.standingsTable.ga") }}</th>
+          <th class="px-2 py-2 text-center font-semibold">{{ t("cup.standingsTable.gd") }}</th>
+          <th class="px-2 py-2 text-center font-semibold">{{ t("cup.standingsTable.points") }}</th>
         </tr>
       </thead>
       <tbody>
@@ -47,7 +47,9 @@ const props = defineProps<{
   standings: Standing[];
 }>();
 
+const { t } = useI18n();
+
 function teamName(teamId: number) {
-  return props.teams.find((t) => t.id === teamId)?.name ?? "?";
+  return props.teams.find((team) => team.id === teamId)?.name ?? t("common.matchLabel.unknownTeam");
 }
 </script>

@@ -13,17 +13,17 @@
         type="number"
         min="0"
         step="1"
-        :aria-label="`Skor ${teamName(fixture.team1)}`"
+        :aria-label="t('cup.fixtureRow.scoreAria', { team: teamName(fixture.team1) })"
         class="clay-inset h-9 w-14 text-center text-sm font-bold text-[var(--clay-text)] outline-none"
         @change="trySave"
       />
-      <span class="text-xs font-semibold text-[var(--clay-text-muted)]">vs</span>
+      <span class="text-xs font-semibold text-[var(--clay-text-muted)]">{{ t("cup.fixtureRow.vs") }}</span>
       <input
         v-model.number="score2"
         type="number"
         min="0"
         step="1"
-        :aria-label="`Skor ${teamName(fixture.team2)}`"
+        :aria-label="t('cup.fixtureRow.scoreAria', { team: teamName(fixture.team2) })"
         class="clay-inset h-9 w-14 text-center text-sm font-bold text-[var(--clay-text)] outline-none"
         @change="trySave"
       />
@@ -46,6 +46,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{ save: [score1: number, score2: number] }>();
+const { t } = useI18n();
 
 const score1 = ref<number | null>(props.fixture.score1);
 const score2 = ref<number | null>(props.fixture.score2);
@@ -59,7 +60,7 @@ watch(
 );
 
 function teamName(teamId: number) {
-  return props.teams.find((t) => t.id === teamId)?.name ?? "?";
+  return props.teams.find((team) => team.id === teamId)?.name ?? t("common.matchLabel.unknownTeam");
 }
 
 function trySave() {

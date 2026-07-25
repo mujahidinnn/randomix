@@ -1,12 +1,42 @@
 <template>
   <div>
+    <div class="mb-3 flex items-center justify-center gap-3 text-[var(--clay-text)]">
+      <BaseToggle :model-value="cupStore.useScore" :label="t('cup.elimination.useScore')" @update:model-value="cupStore.setUseScore" />
+      <span
+        class="cursor-pointer text-sm font-medium sm:text-base"
+        @click="cupStore.setUseScore(!cupStore.useScore)"
+      >
+        {{ t("cup.elimination.useScoreLabel") }}
+      </span>
+    </div>
     <p class="mb-1 text-center text-xs text-[var(--clay-text-muted)]">
-      Klik nama tim yang menang untuk lanjut ke babak berikutnya.
+      {{ cupStore.useScore ? t("cup.elimination.helperScored") : t("cup.elimination.helperManual") }}
     </p>
-    <p v-if="!cupStore.champion" class="mb-2 text-center text-xs font-semibold text-[var(--clay-text-muted)] sm:text-sm">
+    <p
+      v-if="!cupStore.champion"
+      class="mb-2 text-center text-xs font-semibold text-[var(--clay-text-muted)] sm:text-sm"
+    >
       {{ progressText }}
     </p>
-    <p class="mb-2 text-xs text-[var(--clay-text-muted)] sm:hidden" aria-hidden="true">Geser untuk lihat ronde berikutnya →</p>
+    <p
+      class="mb-2 text-xs text-[var(--clay-text-muted)] sm:hidden"
+      aria-hidden="true"
+    >
+      {{ t("cup.elimination.swipeHint") }}
+    </p>
+    <div
+      v-if="legendInfo.hasBye || legendInfo.hasTbd"
+      class="mb-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-[var(--clay-text-muted)] sm:text-xs"
+    >
+      <span v-if="legendInfo.hasBye" class="inline-flex items-center gap-1.5">
+        <span class="rounded-full bg-black/10 px-2 py-0.5 font-bold text-[var(--clay-text)]">{{ t("common.matchLabel.bye") }}</span>
+        {{ t("cup.elimination.legendByeLabel") }}
+      </span>
+      <span v-if="legendInfo.hasTbd" class="inline-flex items-center gap-1.5">
+        <span class="rounded-full bg-black/10 px-2 py-0.5 font-bold text-[var(--clay-text)]">{{ t("common.matchLabel.tbd") }}</span>
+        {{ t("cup.elimination.legendTbdLabel") }}
+      </span>
+    </div>
     <div class="-mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
       <TournamentBracket
         :rounds="rounds"
@@ -18,9 +48,21 @@
         winner-score-background-color="#fbbf24"
         @on-participant-click="onParticipantClick"
       >
-        <template #team="{ team }">
-          <span class="font-semibold">{{ team.name }}</span>
-          <span v-if="team.score != null" class="ml-1 text-[var(--clay-text-muted)]">({{ team.score }})</span>
+        <template #team="{ team, match }">
+          <span class="name truncate font-semibold">{{ team.name }}</span>
+          <span v-if="canScoreMatch(match) && team.id !== '?'" class="score" @click.stop>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              inputmode="numeric"
+              class="score-input"
+              :aria-label="t('cup.elimination.scoreAria', { team: team.name })"
+              :value="team.score ?? ''"
+              @change="onScoreChange(match, team, $event)"
+            />
+          </span>
+          <span v-else-if="team.score != null" class="score">{{ team.score }}</span>
         </template>
       </TournamentBracket>
     </div>
@@ -45,6 +87,7 @@ import "vue3-tournament/style.css";
 
 const cupStore = useCupStore();
 const toast = useToast();
+const { t } = useI18n();
 
 type ConfirmDialogState = {
   title: string;
@@ -59,58 +102,130 @@ function handleConfirmDialogConfirm() {
   confirmDialog.value = null;
 }
 
-// Nama ronde ala turnamen sungguhan, dihitung mundur dari final.
 function roundTitle(roundIndex: number, totalRounds: number) {
   const fromEnd = totalRounds - 1 - roundIndex;
-  if (fromEnd === 0) return "Final";
-  if (fromEnd === 1) return "Semifinal";
-  if (fromEnd === 2) return "Perempat Final";
-  return `Babak ${roundIndex + 1}`;
+  if (fromEnd === 0) return t("common.roundTitle.final");
+  if (fromEnd === 1) return t("common.roundTitle.semifinal");
+  if (fromEnd === 2) return t("common.roundTitle.quarterfinal");
+  return t("common.roundTitle.roundN", { n: roundIndex + 1 });
 }
 
-// Konversi data store -> IRound yang dipahami vue3-tournament.
 const rounds = computed(() =>
   cupStore.rounds.map((r, roundIndex) => ({
     matchs: r.matchs.map((m) => {
-      const [a, b] = m.teams.map((id) => (id != null ? cupStore.teams.find((t) => t.id === id) : undefined));
+      const [a, b] = m.teams.map((id) =>
+        id != null ? cupStore.teams.find((t) => t.id === id) : undefined,
+      );
+      // Match dengan 1 slot (bye) beda dari match 2-slot yang lawannya belum
+      // ditentukan — labelnya jangan disamakan biar gak membingungkan.
+      const emptyLabel = m.teams.length === 1 ? t("common.matchLabel.bye") : t("common.matchLabel.tbd");
       return {
         id: m.id,
         title: roundTitle(roundIndex, cupStore.rounds.length),
-        team1: a ? { id: a.id, name: a.name, score: null } : { id: "?", name: "TBD" },
-        team2: b ? { id: b.id, name: b.name, score: null } : { id: "?", name: "TBD" },
+        team1: a
+          ? { id: a.id, name: a.name, score: cupStore.useScore ? m.score1 ?? null : null }
+          : { id: "?", name: emptyLabel },
+        team2: b
+          ? { id: b.id, name: b.name, score: cupStore.useScore ? m.score2 ?? null : null }
+          : { id: "?", name: emptyLabel },
         winner: m.winner,
       };
     }),
-  }))
+  })),
 );
 
-// Match yang relevan untuk progres = punya dua tim nyata (bukan bye/TBD).
-const progressText = computed(() => {
-  const playable = cupStore.matches.filter((m) => m.teams.every((id) => id != null));
-  const decided = playable.filter((m) => m.winner != null).length;
-  return `${decided}/${playable.length} match selesai`;
+const legendInfo = computed(() => {
+  let hasBye = false;
+  let hasTbd = false;
+  for (const round of cupStore.rounds) {
+    for (const m of round.matchs) {
+      if (m.teams.length === 1) hasBye = true;
+      else if (m.teams.includes(null)) hasTbd = true;
+    }
+  }
+  return { hasBye, hasTbd };
 });
 
-function applyMatchResult(matchId: number, winnerId: number, winnerName?: string) {
-  cupStore.setMatchResult(matchId, winnerId);
-  toast.success(`${winnerName ?? "Tim"} maju ke babak berikutnya!`);
+const progressText = computed(() => {
+  const playable = cupStore.matches.filter((m) =>
+    m.teams.every((id) => id != null),
+  );
+  const decided = playable.filter((m) => m.winner != null).length;
+  return t("cup.elimination.progress", { decided, total: playable.length });
+});
+
+function canScoreMatch(match: { team1?: { id: string | number }; team2?: { id: string | number } }) {
+  return cupStore.useScore && match.team1?.id !== "?" && match.team2?.id !== "?";
 }
 
-function onParticipantClick(participant: { id: string | number; name?: string }, match: { id?: string | number }) {
+function onScoreChange(
+  match: { id: string | number; team1?: { id: string | number }; team2?: { id: string | number } },
+  team: { id: string | number },
+  event: Event,
+) {
+  const raw = (event.target as HTMLInputElement).value;
+  const score = raw === "" ? null : Number(raw);
+  if (score != null && (!Number.isInteger(score) || score < 0)) return;
+
+  const matchId = match.id as number;
+  const slot = match.team1?.id === team.id ? 0 : 1;
+  cupStore.setMatchScore(matchId, slot, score);
+
+  const updated = cupStore.matches.find((m) => m.id === matchId);
+  if (!updated || updated.score1 == null || updated.score2 == null) return;
+  if (updated.score1 === updated.score2) return;
+  if (!updated.teams.every((id) => id != null)) return;
+
+  const winnerId = updated.score1 > updated.score2 ? updated.teams[0]! : updated.teams[1]!;
+  const winnerName = cupStore.teams.find((t) => t.id === winnerId)?.name;
+  applyMatchResult(matchId, winnerId, winnerName);
+}
+
+function applyMatchResult(
+  matchId: number,
+  winnerId: number,
+  winnerName?: string,
+) {
+  cupStore.setMatchResult(matchId, winnerId);
+  toast.success(t("cup.elimination.advanced", { name: winnerName ?? t("cup.standingsTable.team") }));
+}
+
+function onParticipantClick(
+  participant: { id: string | number; name?: string },
+  match: { id?: string | number },
+) {
   if (participant.id === "?" || match.id === undefined) {
-    toast.info("Slot ini belum terisi tim.");
+    toast.info(t("cup.elimination.emptySlot"));
     return;
   }
 
   const matchId = match.id as number;
   const winnerId = participant.id as number;
   const existingMatch = cupStore.matches.find((m) => m.id === matchId);
-  const isOverturn = existingMatch?.winner != null && existingMatch.winner !== winnerId;
+  if (!existingMatch) return;
+
+  const isOverturn =
+    existingMatch.winner != null && existingMatch.winner !== winnerId;
+  // Match punya 2 slot tapi lawannya belum ditentukan (masih TBD) — tetap boleh
+  // memenangkan tim ini duluan (mis. walkover), tapi wanti-wanti dulu supaya
+  // gak kepencet gak sengaja.
+  const hasUndecidedOpponent =
+    existingMatch.teams.length === 2 && existingMatch.teams.includes(null);
 
   if (isOverturn) {
     confirmDialog.value = {
-      title: "Ubah pemenang match?",
-      message: `Progres di babak berikutnya yang berasal dari hasil match ini akan direset ke ${participant.name ?? "tim ini"}.`,
+      title: t("cup.elimination.overturnTitle"),
+      message: t("cup.elimination.overturnMessage", { name: participant.name ?? t("cup.elimination.overturnFallbackName") }),
+      variant: "danger",
+      onConfirm: () => applyMatchResult(matchId, winnerId, participant.name),
+    };
+    return;
+  }
+
+  if (hasUndecidedOpponent) {
+    confirmDialog.value = {
+      title: t("cup.elimination.walkoverTitle"),
+      message: t("cup.elimination.walkoverMessage", { name: participant.name ?? t("cup.elimination.walkoverFallbackName") }),
       variant: "danger",
       onConfirm: () => applyMatchResult(matchId, winnerId, participant.name),
     };
@@ -132,14 +247,36 @@ function onParticipantClick(participant: { id: string | number; name?: string },
   transition: background-color 0.15s ease;
 }
 :deep(.vt-item-teams .vt-team .name) {
-  width: 160px;
+  width: 148px;
   padding: 8px 12px;
   font-size: 14px;
 }
 :deep(.vt-item-teams .vt-team .score) {
-  width: 28px;
-  padding: 8px;
+  width: 40px;
+  padding: 4px;
   font-size: 14px;
+  text-align: center;
+}
+:deep(.vt-item-teams .vt-team .score-input) {
+  width: 32px;
+  border: none;
+  border-radius: 0.375rem;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 2px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--clay-text);
+  outline: none;
+}
+:deep(.vt-item-teams .vt-team .score-input:focus) {
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.6);
+}
+:deep(.vt-item-teams .vt-team .score-input::-webkit-inner-spin-button),
+:deep(.vt-item-teams .vt-team .score-input::-webkit-outer-spin-button) {
+  -webkit-appearance: none;
+  margin: 0;
 }
 :deep(.vt-item-teams .title) {
   font-size: 11px;

@@ -60,10 +60,10 @@ const sizeClasses = computed(
 const variantClasses = computed(
   () =>
     ({
-      primary: "bg-[var(--clay-accent)] text-emerald-950",
+      primary: "bg-[var(--clay-accent)] text-white",
       secondary: "bg-[var(--clay-surface-alt)] text-[var(--clay-text)]",
       ghost: "!shadow-none bg-transparent text-[var(--clay-text)] hover:bg-black/5",
-      accent: "bg-[var(--clay-amber)] text-amber-950",
+      accent: "bg-[var(--clay-amber)] text-white",
     }[props.variant])
 );
 </script>

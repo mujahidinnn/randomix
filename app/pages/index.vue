@@ -1,27 +1,28 @@
 <template>
   <main
-    class="page-shell relative flex min-h-screen flex-col items-center justify-center p-6 text-center"
+    class="page-shell relative flex min-h-screen flex-col items-center justify-center overflow-hidden pt-[max(1.5rem,env(safe-area-inset-top))] pr-[max(1.5rem,env(safe-area-inset-right))] pb-[max(1.5rem,env(safe-area-inset-bottom))] pl-[max(1.5rem,env(safe-area-inset-left))] text-center"
   >
-    <!-- Logo Randomix -->
     <div class="mb-6 animate-scaleIn lg:mb-8">
       <img
-        src="/randomix.png"
-        alt="Logo Randomix"
+        src="/randomix-white.png"
+        :alt="t('common.logoAlt')"
         width="497"
         height="123"
-        class="w-60 md:w-80 lg:w-[26rem]"
+        class="w-60 drop-shadow-[0_4px_16px_rgba(0,0,0,0.15)] md:w-80 lg:w-[26rem]"
         fetchpriority="high"
       />
     </div>
 
-    <!-- Heading utama (H1 tunggal untuk halaman ini) -->
     <h1
-      class="delay-200 mb-10 max-w-xl animate-fadeIn text-2xl font-bold leading-snug tracking-tight text-[var(--clay-text)] md:text-4xl lg:max-w-3xl lg:text-5xl"
+      class="delay-200 mb-10 max-w-xl animate-fadeIn text-2xl font-bold leading-snug tracking-tight text-[var(--page-text)] drop-shadow-sm md:text-4xl lg:max-w-3xl lg:text-5xl"
     >
-      Buat tim olahraga kamu secara adil &amp; seru!
+      {{ t("home.hero.titleLead") }}
+      <span
+        class="bg-gradient-to-r from-amber-200 to-pink-200 bg-clip-text text-transparent"
+        >{{ t("home.hero.titleHighlight") }}</span
+      >
     </h1>
 
-    <!-- Tombol CTA -->
     <BaseButton
       tag="NuxtLink"
       to="/generate"
@@ -31,79 +32,84 @@
       <template #icon>
         <RocketLaunchIcon class="h-5 w-5 lg:h-6 lg:w-6" aria-hidden="true" />
       </template>
-      Mulai Buat Tim
+      {{ t("home.cta") }}
     </BaseButton>
 
-    <!-- Highlight fitur -->
     <ul
       class="delay-500 mt-10 flex w-full max-w-xs animate-fadeIn flex-col gap-3 text-left sm:max-w-xl sm:flex-row sm:justify-center sm:gap-4 sm:text-center lg:mt-16 lg:max-w-4xl lg:gap-8"
     >
       <li
-        v-for="feature in features"
-        :key="feature.title"
+        v-for="(feature, idx) in features"
+        :key="feature.key"
         class="clay-surface clay-raised flex items-center gap-3 px-4 py-3 text-[var(--clay-text)] transition sm:flex-1 sm:flex-col sm:gap-3 sm:py-5 lg:gap-4 lg:p-8"
+        :style="{ transform: `rotate(${idx % 2 === 0 ? -1.5 : 1.5}deg)` }"
       >
-        <span class="clay-inset flex h-11 w-11 shrink-0 items-center justify-center rounded-full lg:h-14 lg:w-14">
-          <component :is="feature.icon" class="h-5 w-5 text-[var(--clay-accent-dark)] lg:h-6 lg:w-6" aria-hidden="true" />
+        <span
+          class="clay-inset flex h-11 w-11 shrink-0 items-center justify-center rounded-full lg:h-14 lg:w-14"
+          :style="{ transform: `rotate(${idx % 2 === 0 ? 8 : -8}deg)` }"
+        >
+          <component
+            :is="feature.icon"
+            class="h-5 w-5 text-[var(--clay-accent-dark)] lg:h-6 lg:w-6"
+            aria-hidden="true"
+          />
         </span>
         <div>
-          <p class="text-sm font-bold sm:text-base lg:text-lg">{{ feature.title }}</p>
-          <p class="text-xs text-[var(--clay-text-muted)] sm:text-sm lg:text-base">{{ feature.description }}</p>
+          <p class="text-sm font-bold sm:text-base lg:text-lg">
+            {{ t(`home.features.${feature.key}.title`) }}
+          </p>
+          <p
+            class="text-xs text-[var(--clay-text-muted)] sm:text-sm lg:text-base"
+          >
+            {{ t(`home.features.${feature.key}.description`) }}
+          </p>
         </div>
       </li>
     </ul>
 
-    <!-- Footer -->
-    <footer class="delay-600 mt-12 animate-fadeIn text-sm text-[var(--clay-text-muted)] lg:mt-20">
-      &copy; {{ currentYear }} Randomix. Semua hak cipta dilindungi.
+    <footer
+      class="delay-600 mt-12 animate-fadeIn text-sm text-[var(--page-text-muted)] lg:mt-20"
+    >
+      {{ t("home.footer", { year: currentYear }) }}
     </footer>
   </main>
 </template>
 
 <script setup>
-import { RocketLaunchIcon, SparklesIcon, TrophyIcon, ShareIcon } from "@heroicons/vue/24/solid";
+import {
+  RocketLaunchIcon,
+  SparklesIcon,
+  TrophyIcon,
+  ShareIcon,
+} from "@heroicons/vue/24/solid";
+
+const { t } = useI18n();
 
 const currentYear = new Date().getFullYear();
 
 const features = [
-  {
-    icon: SparklesIcon,
-    title: "Acak & Adil",
-    description: "Pembagian tim acak, opsional dibobot pakai level skill.",
-  },
-  {
-    icon: TrophyIcon,
-    title: "Bagan Turnamen",
-    description: "Lanjut ke bagan single-elimination tanpa input ulang.",
-  },
-  {
-    icon: ShareIcon,
-    title: "Bagikan Hasil",
-    description: "Ekspor ke PDF, gambar, teks, atau langsung ke WhatsApp.",
-  },
+  { key: "random", icon: SparklesIcon },
+  { key: "bracket", icon: TrophyIcon },
+  { key: "share", icon: ShareIcon },
 ];
 
 const config = useRuntimeConfig();
-// og:image/twitter:image butuh URL absolut agar bisa di-crawl oleh bot yang tidak menjalankan JS.
 const ogImageUrl = new URL("/randomix.png", config.public.siteUrl).toString();
 
 useSeoMeta({
-  title: "Buat Tim Olahraga Secara Adil & Acak",
-  description:
-    "Randomix membantu kamu membagi tim olahraga secara adil dan acak dalam hitungan detik, lengkap dengan bagan turnamen otomatis.",
-  ogTitle: "Randomix — Buat Tim Olahraga Secara Adil & Acak",
-  ogDescription:
-    "Bagi pemain jadi tim yang seimbang, generate bagan turnamen, lalu bagikan hasilnya sebagai gambar, PDF, atau WhatsApp.",
+  title: () => t("home.seo.title"),
+  description: () => t("home.seo.description"),
+  ogTitle: () => t("home.seo.ogTitle"),
+  ogDescription: () => t("home.seo.ogDescription"),
   ogUrl: config.public.siteUrl,
   ogImage: ogImageUrl,
   ogImageWidth: 498,
   ogImageHeight: 129,
-  ogImageAlt: "Logo Randomix",
-  twitterTitle: "Randomix — Buat Tim Olahraga Secara Adil & Acak",
-  twitterDescription:
-    "Bagi pemain jadi tim yang seimbang secara instan, lengkap dengan bagan turnamen.",
+  ogImageAlt: () => t("common.logoAlt"),
+  twitterTitle: () => t("home.seo.ogTitle"),
+  twitterDescription: () => t("home.seo.twitterDescription"),
   twitterImage: ogImageUrl,
-  twitterImageAlt: "Logo Randomix",
+  twitterImageAlt: () => t("common.logoAlt"),
 });
 
 useHead({
@@ -118,8 +124,7 @@ useHead({
         applicationCategory: "SportsApplication",
         operatingSystem: "Any",
         url: config.public.siteUrl,
-        description:
-          "Randomix membantu membagi tim olahraga secara adil dan acak, lengkap dengan bagan turnamen otomatis.",
+        description: t("home.seo.jsonLdDescription"),
         offers: {
           "@type": "Offer",
           price: "0",

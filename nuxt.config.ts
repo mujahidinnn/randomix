@@ -1,4 +1,3 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || "https://randomix.vercel.app";
 
 export default defineNuxtConfig({
@@ -9,6 +8,7 @@ export default defineNuxtConfig({
     "@nuxtjs/tailwindcss",
     "@pinia/nuxt",
     "@pinia-plugin-persistedstate/nuxt",
+    "@nuxtjs/i18n",
   ],
 
   css: ["~/assets/css/main.css"],
@@ -16,6 +16,22 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       siteUrl,
+    },
+  },
+
+  i18n: {
+    baseUrl: siteUrl,
+    locales: [
+      { code: "id", language: "id-ID", name: "Indonesia", file: "id.json" },
+      { code: "en", language: "en-US", name: "English", file: "en.json" },
+    ],
+    defaultLocale: "id",
+    strategy: "no_prefix",
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: "randomix_locale",
+      fallbackLocale: "id",
+      redirectOn: "root",
     },
   },
 
@@ -39,7 +55,7 @@ export default defineNuxtConfig({
       title: "Randomix",
       meta: [
         { charset: "utf-8" },
-        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
         { name: "theme-color", content: "#3b82f6" },
         // Angka yang mirip nomor telepon (mis. jumlah pemain) tidak perlu di-autolink jadi tel: link di mobile.
         { name: "format-detection", content: "telephone=no" },

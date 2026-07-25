@@ -1,0 +1,269 @@
+{
+  "locale": {
+    "switcherLabel": "Pilih bahasa"
+  },
+  "common": {
+    "logoAlt": "Logo Randomix",
+    "confirmDialog": {
+      "confirm": "Ya, lanjutkan",
+      "cancel": "Batal"
+    },
+    "select": {
+      "defaultLabel": "Pilih opsi",
+      "placeholder": "Pilih..."
+    },
+    "toast": {
+      "closeAria": "Tutup notifikasi: {message}"
+    },
+    "teamAssignSelect": {
+      "placeholder": "Pilih penempatan…",
+      "label": "Pilih penempatan tim",
+      "auto": "⚡ Otomatis (seimbang)",
+      "new": "➕ Buat Tim Baru",
+      "existing": "{name} ({count} pemain)"
+    },
+    "export": {
+      "downloadPdf": "Download PDF",
+      "downloadImage": "Download Gambar",
+      "copyText": "Salin Teks",
+      "shareWhatsapp": "Share WhatsApp",
+      "copyError": "Gagal menyalin teks. Coba salin manual.",
+      "clipboardUnavailable": "Clipboard API tidak tersedia",
+      "whatsappPopupBlocked": "Popup diblokir browser. Aktifkan izin popup untuk membagikan ke WhatsApp.",
+      "imageError": "Gagal membuat gambar. Silakan coba lagi.",
+      "pdfError": "Gagal membuat PDF. Silakan coba lagi.",
+      "generateBy": "Generate by randomix",
+      "generateByWa": "_Generate by *randomix*_"
+    },
+    "roundTitle": {
+      "final": "Final",
+      "semifinal": "Semifinal",
+      "quarterfinal": "Perempat Final",
+      "roundN": "Babak {n}"
+    },
+    "matchLabel": {
+      "bye": "BYE",
+      "tbd": "TBD",
+      "unknownTeam": "?"
+    }
+  },
+  "home": {
+    "hero": {
+      "titleLead": "Buat tim olahraga kamu secara",
+      "titleHighlight": "adil & seru!"
+    },
+    "cta": "Mulai Buat Tim",
+    "features": {
+      "random": {
+        "title": "Acak & Adil",
+        "description": "Pembagian tim acak, opsional dibobot pakai level skill."
+      },
+      "bracket": {
+        "title": "Bagan Turnamen",
+        "description": "Lanjut ke bagan single-elimination tanpa input ulang."
+      },
+      "share": {
+        "title": "Bagikan Hasil",
+        "description": "Ekspor ke PDF, gambar, teks, atau langsung ke WhatsApp."
+      }
+    },
+    "footer": "© {year} Randomix. Semua hak cipta dilindungi.",
+    "seo": {
+      "title": "Buat Tim Olahraga Secara Adil & Acak",
+      "description": "Randomix membantu kamu membagi tim olahraga secara adil dan acak dalam hitungan detik, lengkap dengan bagan turnamen otomatis.",
+      "ogTitle": "Randomix — Buat Tim Olahraga Secara Adil & Acak",
+      "ogDescription": "Bagi pemain jadi tim yang seimbang, generate bagan turnamen, lalu bagikan hasilnya sebagai gambar, PDF, atau WhatsApp.",
+      "twitterDescription": "Bagi pemain jadi tim yang seimbang secara instan, lengkap dengan bagan turnamen.",
+      "jsonLdDescription": "Randomix membantu membagi tim olahraga secara adil dan acak, lengkap dengan bagan turnamen otomatis."
+    }
+  },
+  "generate": {
+    "header": {
+      "back": "Kembali ke beranda",
+      "title": "Generate Tim Olahraga Secara Acak",
+      "step1": "1. Pemain",
+      "step2": "2. Jumlah Tim",
+      "step3": "3. Hasil"
+    },
+    "form": {
+      "heading": "Tambah Pemain",
+      "useLevel": "Gunakan Level",
+      "namePlaceholder": "Nama pemain",
+      "nameLabel": "Nama pemain",
+      "levelLabel": "Level pemain",
+      "submit": "Tambah Pemain"
+    },
+    "levels": {
+      "newbie": "Newbie",
+      "middle": "Middle",
+      "pro": "Pro"
+    },
+    "playerList": {
+      "total": "Total {count}",
+      "levelCount": "{level} {count}",
+      "max": "Maksimal {max}",
+      "clearAll": "Hapus Semua",
+      "pendingBadge": "Belum masuk tim",
+      "removeAria": "Hapus pemain {name}",
+      "empty": "Belum ada pemain"
+    },
+    "pending": {
+      "heading": "🆕 Perlu Ditempatkan ({count})",
+      "autoAll": "⚡ Otomatis Semua",
+      "helper": "Pemain ini ditambahkan setelah tim dibuat. Tim yang sudah ada tidak berubah kecuali kamu pilih di sini.",
+      "assignLabel": "Tempatkan {name} ke tim",
+      "continueWithout": "Lanjutkan Tanpa Mereka →"
+    },
+    "teamCount": {
+      "label": "Jumlah Tim:",
+      "generate": "Generate Tim",
+      "regenerate": "Generate Ulang",
+      "tournamentType": "Jenis Turnamen",
+      "createCup": "Buat Cup Turnamen"
+    },
+    "results": {
+      "empty": "Hasil tim akan muncul di sini setelah kamu generate.",
+      "teamHeading": "Tim {number} ({count})",
+      "disband": "Bubarkan",
+      "moveMemberAria": "Pindahkan {name} ke tim lain",
+      "moveMemberLabel": "Pindahkan {name} ke tim"
+    },
+    "exportCapture": {
+      "teamHeading": "Tim {number}"
+    },
+    "seo": {
+      "title": "Generate Tim",
+      "description": "Tambahkan nama pemain lalu generate tim olahraga secara acak dan adil, dengan atau tanpa mempertimbangkan level skill.",
+      "ogTitle": "Generate Tim — Randomix",
+      "ogDescription": "Tambahkan nama pemain lalu generate tim olahraga secara acak dan adil dalam hitungan detik."
+    },
+    "validation": {
+      "maxReached": "Maksimal {max} pemain tercapai.",
+      "duplicateName": "Nama pemain sudah ada.",
+      "teamCountNaN": "Jumlah tim harus berupa angka.",
+      "teamCountNotInteger": "Jumlah tim harus bilangan bulat.",
+      "teamCountExceeds": "Jumlah tim tidak boleh melebihi jumlah pemain ({max}).",
+      "teamCountMin": "Minimal 2 tim."
+    },
+    "toast": {
+      "maxPlayers": "Maksimal {max} pemain.",
+      "playerAddedPending": "{name} ditambahkan. Pilih tim untuk pemain ini di bawah.",
+      "playerRemoved": "{name} dihapus dari tim.",
+      "clearAllTitle": "Hapus semua pemain?",
+      "clearAllMessage": "{count} pemain dan tim yang sudah dibuat akan dihapus.",
+      "clearedAll": "Semua pemain dihapus.",
+      "needTwoPlayers": "Tambahkan minimal 2 pemain untuk generate tim.",
+      "needTwoTeams": "Jumlah tim minimal 2.",
+      "teamsGenerated": "Tim berhasil dibuat!",
+      "playerAssigned": "{name} masuk ke Tim {teamNumber}.",
+      "playerNewTeam": "{name} membentuk Tim {teamNumber} baru.",
+      "allPendingAssigned": "Semua pemain baru berhasil ditempatkan.",
+      "memberMovedNew": "{name} pindah ke Tim {teamNumber} (baru).",
+      "memberMovedAuto": "{name} dipindah otomatis ke Tim {teamNumber}.",
+      "memberMoved": "{name} pindah ke Tim {teamNumber}.",
+      "teamDisbanded": "Tim {teamNumber} dibubarkan.",
+      "disbandTitle": "Bubarkan tim ini?",
+      "disbandMessage": "Bubarkan Tim {teamNumber}? {count} pemain akan kembali ke daftar belum masuk tim.",
+      "needTeamsForCup": "Generate minimal 2 tim terlebih dahulu.",
+      "pendingBeforeCup": "{count} pemain belum masuk tim. Atur di bawah, atau lanjutkan tanpa mereka.",
+      "textCopied": "Hasil tim berhasil disalin!"
+    },
+    "shareText": {
+      "header": "Hasil Generate Tim:",
+      "headerWa": "*Hasil Generate Tim:*",
+      "teamLine": "Tim {number}:",
+      "teamLineWa": "*Tim {number}:*"
+    }
+  },
+  "cup": {
+    "header": {
+      "back": "Kembali ke halaman generate tim",
+      "title": "Bagan Turnamen",
+      "sectionAria": "Bagan turnamen"
+    },
+    "champion": "Juara: {name}",
+    "daftarTim": "Daftar Tim",
+    "resetButton": "Buat Turnamen Baru",
+    "empty": "Belum ada data cup, silakan buat di halaman Generate.",
+    "emptyAction": "Ke Halaman Generate",
+    "status": {
+      "win": "Menang",
+      "lose": "Tersingkir",
+      "pending": "Menunggu"
+    },
+    "seo": {
+      "title": "Bagan Turnamen",
+      "description": "Lihat dan kelola bagan turnamen tim yang telah kamu buat di Randomix.",
+      "ogTitle": "Bagan Turnamen — Randomix"
+    },
+    "toast": {
+      "textCopied": "Hasil turnamen berhasil disalin!",
+      "resetTitle": "Buat turnamen baru?",
+      "resetMessage": "Progres turnamen saat ini akan hilang.",
+      "resetDone": "Turnamen direset."
+    },
+    "shareText": {
+      "header": "Hasil Turnamen",
+      "champion": "🏆 Juara: {name}",
+      "winSuffix": " -> Menang: {name}",
+      "standingsHeading": "Klasemen",
+      "fixturesHeading": "Pertandingan",
+      "knockoutHeading": "Babak Knockout"
+    },
+    "typeSelector": {
+      "ariaLabel": "Jenis turnamen",
+      "elimination": { "label": "Bagan Turnamen", "description": "Sistem gugur" },
+      "roundrobin": { "label": "Round Robin", "description": "Semua lawan semua" },
+      "group": { "label": "Grup Stage", "description": "Fase grup + knockout" }
+    },
+    "standingsTable": {
+      "rank": "#",
+      "team": "Tim",
+      "played": "Main",
+      "won": "M",
+      "drawn": "S",
+      "lost": "K",
+      "gf": "GM",
+      "ga": "GK",
+      "gd": "SG",
+      "points": "Poin"
+    },
+    "fixtureRow": {
+      "scoreAria": "Skor {team}",
+      "vs": "vs"
+    },
+    "elimination": {
+      "useScore": "Gunakan skor",
+      "useScoreLabel": "Gunakan skor pertandingan",
+      "helperScored": "Isi skor tiap tim, pemenang ditentukan otomatis. Bisa juga klik nama tim untuk menang manual.",
+      "helperManual": "Klik nama tim yang menang untuk lanjut ke babak berikutnya.",
+      "progress": "{decided}/{total} match selesai",
+      "swipeHint": "Geser untuk lihat ronde berikutnya →",
+      "scoreAria": "Skor {team}",
+      "advanced": "{name} maju ke babak berikutnya!",
+      "emptySlot": "Slot ini belum terisi tim.",
+      "overturnTitle": "Ubah pemenang match?",
+      "overturnMessage": "Progres di babak berikutnya yang berasal dari hasil match ini akan direset ke {name}.",
+      "overturnFallbackName": "tim ini",
+      "walkoverTitle": "Menangkan tim ini sekarang?",
+      "walkoverMessage": "Lawan di match ini belum ditentukan. {name} akan langsung maju ke babak berikutnya.",
+      "walkoverFallbackName": "Tim ini",
+      "legendByeLabel": "= tim otomatis lolos tanpa lawan (jumlah tim ganjil)",
+      "legendTbdLabel": "= slot belum terisi, menunggu pemenang match sebelumnya"
+    },
+    "roundRobin": {
+      "standingsHeading": "Klasemen",
+      "fixturesHeading": "Pertandingan ({played}/{total} selesai)",
+      "scoreSaved": "Skor tersimpan."
+    },
+    "groupStage": {
+      "groupNamePrefix": "Grup",
+      "allPlayed": "Semua pertandingan grup selesai.",
+      "notAllPlayed": "Isi semua skor pertandingan grup dulu untuk lanjut ke knockout.",
+      "buildKnockout": "Buat Babak Knockout",
+      "knockoutHeading": "Babak Knockout",
+      "scoreSaved": "Skor tersimpan.",
+      "knockoutBuilt": "Babak knockout dibuat dari 2 tim teratas tiap grup!"
+    }
+  }
+}

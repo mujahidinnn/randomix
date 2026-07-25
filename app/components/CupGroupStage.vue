@@ -16,16 +16,16 @@
 
     <div v-if="!cupStore.knockoutStarted" class="flex flex-col items-center gap-2 text-center">
       <p class="text-xs text-[var(--clay-text-muted)] sm:text-sm">
-        {{ allGroupsPlayed ? "Semua pertandingan grup selesai." : "Isi semua skor pertandingan grup dulu untuk lanjut ke knockout." }}
+        {{ allGroupsPlayed ? t("cup.groupStage.allPlayed") : t("cup.groupStage.notAllPlayed") }}
       </p>
       <BaseButton variant="accent" :disabled="!allGroupsPlayed" @click="startKnockout">
         <template #icon><TrophyIcon class="h-4 w-4" aria-hidden="true" /></template>
-        Buat Babak Knockout
+        {{ t("cup.groupStage.buildKnockout") }}
       </BaseButton>
     </div>
 
     <div v-else>
-      <h3 class="mb-3 text-sm font-bold text-[var(--clay-text)] sm:text-base">Babak Knockout</h3>
+      <h3 class="mb-3 text-sm font-bold text-[var(--clay-text)] sm:text-base">{{ t("cup.groupStage.knockoutHeading") }}</h3>
       <CupElimination />
     </div>
   </div>
@@ -40,6 +40,7 @@ import { buildStandings } from "../utils/standings";
 
 const cupStore = useCupStore();
 const toast = useToast();
+const { t } = useI18n();
 
 const allGroupsPlayed = computed(() =>
   cupStore.groups.length > 0 && cupStore.groups.every((g) => g.fixtures.every((f) => f.played))
@@ -51,11 +52,11 @@ function groupStandings(group: Group) {
 
 function saveFixture(groupId: number, fixtureId: number, score1: number, score2: number) {
   cupStore.recordGroupFixtureResult(groupId, fixtureId, score1, score2);
-  toast.success("Skor tersimpan.");
+  toast.success(t("cup.groupStage.scoreSaved"));
 }
 
 function startKnockout() {
   cupStore.buildKnockoutFromGroups();
-  toast.success("Babak knockout dibuat dari 2 tim teratas tiap grup!");
+  toast.success(t("cup.groupStage.knockoutBuilt"));
 }
 </script>

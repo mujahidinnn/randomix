@@ -7,7 +7,7 @@
   >
     <span class="sr-only">{{ label }}</span>
     <span
-      class="clay-raised inline-block h-5 w-5 transform rounded-full bg-white transition-transform"
+      class="inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform"
       :class="modelValue ? 'translate-x-6' : 'translate-x-1'"
     />
   </Switch>
