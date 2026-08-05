@@ -146,7 +146,7 @@ import { buildStandings, type Standing } from "../utils/standings";
 const { t } = useI18n();
 
 const config = useRuntimeConfig();
-const ogImageUrl = new URL("/randomix.png", config.public.siteUrl).toString();
+const ogImageUrl = new URL("/og-image.png", config.public.siteUrl).toString();
 
 useSeoMeta({
   title: () => t("cup.seo.title"),
@@ -154,12 +154,13 @@ useSeoMeta({
   ogTitle: () => t("cup.seo.ogTitle"),
   ogDescription: () => t("cup.seo.description"),
   ogImage: ogImageUrl,
-  ogImageWidth: 498,
-  ogImageHeight: 129,
-  ogImageAlt: () => t("common.logoAlt"),
+  ogImageType: "image/png",
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
+  ogImageAlt: () => t("cup.seo.ogTitle"),
   twitterCard: "summary_large_image",
   twitterImage: ogImageUrl,
-  twitterImageAlt: () => t("common.logoAlt"),
+  twitterImageAlt: () => t("cup.seo.ogTitle"),
   // Halaman ini menampilkan data lokal milik pengguna, bukan konten publik yang stabil.
   robots: "noindex, follow",
 });

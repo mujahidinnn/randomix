@@ -94,7 +94,7 @@ const features = [
 ];
 
 const config = useRuntimeConfig();
-const ogImageUrl = new URL("/randomix.png", config.public.siteUrl).toString();
+const ogImageUrl = new URL("/og-image.png", config.public.siteUrl).toString();
 
 useSeoMeta({
   title: () => t("home.seo.title"),
@@ -103,13 +103,15 @@ useSeoMeta({
   ogDescription: () => t("home.seo.ogDescription"),
   ogUrl: config.public.siteUrl,
   ogImage: ogImageUrl,
-  ogImageWidth: 498,
-  ogImageHeight: 129,
-  ogImageAlt: () => t("common.logoAlt"),
+  ogImageType: "image/png",
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
+  ogImageAlt: () => t("home.seo.ogTitle"),
+  twitterCard: "summary_large_image",
   twitterTitle: () => t("home.seo.ogTitle"),
   twitterDescription: () => t("home.seo.twitterDescription"),
   twitterImage: ogImageUrl,
-  twitterImageAlt: () => t("common.logoAlt"),
+  twitterImageAlt: () => t("home.seo.ogTitle"),
 });
 
 useHead({

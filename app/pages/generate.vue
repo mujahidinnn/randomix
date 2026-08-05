@@ -494,7 +494,7 @@ import { shuffleArray } from "../utils/shuffle";
 const { t } = useI18n();
 
 const config = useRuntimeConfig();
-const ogImageUrl = new URL("/randomix.png", config.public.siteUrl).toString();
+const ogImageUrl = new URL("/og-image.png", config.public.siteUrl).toString();
 
 useSeoMeta({
   title: () => t("generate.seo.title"),
@@ -503,12 +503,13 @@ useSeoMeta({
   ogDescription: () => t("generate.seo.ogDescription"),
   ogUrl: `${config.public.siteUrl}/generate`,
   ogImage: ogImageUrl,
-  ogImageWidth: 498,
-  ogImageHeight: 129,
-  ogImageAlt: () => t("common.logoAlt"),
+  ogImageType: "image/png",
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
+  ogImageAlt: () => t("generate.seo.ogTitle"),
   twitterCard: "summary_large_image",
   twitterImage: ogImageUrl,
-  twitterImageAlt: () => t("common.logoAlt"),
+  twitterImageAlt: () => t("generate.seo.ogTitle"),
   robots: "index, follow",
 });
 useHead({
